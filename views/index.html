@@ -1,0 +1,25 @@
+<html>
+<!DOCTYPE html>
+<head>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+</head>
+<body>
+  <script src="/primus.js" type="text/javascript" charset="utf-8"></script>
+  
+  <script type="text/javascript" charset="utf-8">
+    var primus = Primus.connect(undefined, { websockets: true, network: true, manual: true });
+    var user_id = 12345;
+    var auth_token = 'abcdef';
+    
+    primus.on('outgoing::url', function(url) {
+      url.query = 'user_id=' + user_id + '&' + 'auth_token=' + auth_token;
+    });
+    
+    primus.on('data', function(data) {
+      
+    });
+    
+    primus.end().open();
+  </script>
+</body>
+</html>
