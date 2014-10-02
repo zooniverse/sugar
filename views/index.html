@@ -32,7 +32,9 @@
       });
     }
     
-    var getNotifications = function() {
+    var getNotifications = function(isUnread) {
+      if(!isUnread) isUnread = null;
+      
       var key = userId ? 'user:' + userId : 'session:' + sessionId;
       primus.write({
         action: 'GetNotifications',
@@ -40,9 +42,26 @@
           limit: 20,
           offset: notificationOffset,
           userId: userId,
-          sessionId: sessionId
+          sessionId: sessionId,
+          unread: isUnread
         }
-      })
+      });
+    };
+    
+    var receivedNotifications = function(notifications) {
+      var toMark = notifications.filter(function(notification) {
+        return !notification.is_delivered;
+      }).map(function(notification) {
+        notification.is_delivered = true;
+        return notification.id;
+      });
+      
+      if(toMark.length > 0) {
+        primus.write({
+          action: 'ReadNotifications',
+          params: { ids: toMark }
+        });
+      }
     };
     
     primus.on('outgoing::url', function(url) {
@@ -55,6 +74,8 @@
       if(data.type == 'notifications') {
         var lastNotification = data.notifications[data.notifications.length - 1] || { }
         if(lastNotification.created_at) notificationOffset = lastNotification.created_at;
+        
+        receivedNotifications(data.notifications);
       }
     });
     
