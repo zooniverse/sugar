@@ -9,8 +9,10 @@
   <script type="text/javascript" charset="utf-8">
     var primus = Primus.connect(undefined, { websockets: true, network: true, manual: true, ping: 20000 });
     var project = 'testing';
-    var user_id = 12345;
-    var auth_token = 'abcdef';
+    var userId = 12345;
+    var sessionId = null;
+    var authToken = 'abcdef';
+    var notificationOffset = null;
     
     var subscribeTo = function(channel) {
       primus.write({
@@ -21,21 +23,49 @@
       });
     };
     
+    var createNotification = function(message, url, category) {
+      $.post('/notify', {
+        user_id: userId,
+        message: message,
+        url: url,
+        category: category
+      });
+    }
+    
+    var getNotifications = function() {
+      var key = userId ? 'user:' + userId : 'session:' + sessionId;
+      primus.write({
+        action: 'GetNotifications',
+        params: {
+          limit: 20,
+          offset: notificationOffset,
+          userId: userId,
+          sessionId: sessionId
+        }
+      })
+    };
+    
     primus.on('outgoing::url', function(url) {
-      url.query = 'user_id=' + user_id + '&' + 'auth_token=' + auth_token;
+      url.query = 'user_id=' + userId + '&' + 'auth_token=' + authToken;
     });
     
     primus.on('data', function(data) {
       console.log('received ', data);
+      
+      if(data.type == 'notifications') {
+        var lastNotification = data.notifications[data.notifications.length - 1] || { }
+        if(lastNotification.created_at) notificationOffset = lastNotification.created_at;
+      }
     });
     
     primus.on('open', function() {
       subscribeTo('zooniverse');
       subscribeTo('projects:' + project);
-      if(user_id) {
-        subscribeTo('users:' + user_id);
+      if(userId) {
+        subscribeTo('users:' + userId);
       } else {
         primus.id(function(id) {
+          sessionId = id;
           subscribeTo('session:' + id);
         });
       }
