@@ -7,16 +7,38 @@
   <script src="/primus.js" type="text/javascript" charset="utf-8"></script>
   
   <script type="text/javascript" charset="utf-8">
-    var primus = Primus.connect(undefined, { websockets: true, network: true, manual: true });
+    var primus = Primus.connect(undefined, { websockets: true, network: true, manual: true, ping: 20000 });
+    var project = 'testing';
     var user_id = 12345;
     var auth_token = 'abcdef';
+    
+    var subscribeTo = function(channel) {
+      primus.write({
+        action: 'Subscribe',
+        params: {
+          channel: channel
+        }
+      });
+    };
     
     primus.on('outgoing::url', function(url) {
       url.query = 'user_id=' + user_id + '&' + 'auth_token=' + auth_token;
     });
     
     primus.on('data', function(data) {
-      
+      console.log('received ', data);
+    });
+    
+    primus.on('open', function() {
+      subscribeTo('zooniverse');
+      subscribeTo('projects:' + project);
+      if(user_id) {
+        subscribeTo('users:' + user_id);
+      } else {
+        primus.id(function(id) {
+          subscribeTo('session:' + id);
+        });
+      }
     });
     
     primus.end().open();
