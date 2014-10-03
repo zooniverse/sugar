@@ -64,6 +64,15 @@
       }
     };
     
+    var getAnnouncements = function() {
+      primus.write({
+        action: 'GetAnnouncements',
+        params: {
+          channels: ['zooniverse', 'projects:' + project]
+        }
+      });
+    };
+    
     primus.on('outgoing::url', function(url) {
       url.query = 'user_id=' + userId + '&' + 'auth_token=' + authToken;
     });
