@@ -64,6 +64,14 @@
       }
     };
     
+    var createAnnouncement = function(message, scope, category) {
+      $.post('/announce', {
+        message: message,
+        scope: scope,
+        category: category
+      });
+    }
+    
     var getAnnouncements = function() {
       primus.write({
         action: 'GetAnnouncements',
