@@ -81,6 +81,17 @@
       });
     };
     
+    var receivedAnnouncements = function(announcements) {
+      primus.write({
+        action: 'ReadAnnouncements',
+        params: {
+          keys: announcements.map(function(announcement) {
+            return announcement.scope + ':' + announcement.id;
+          })
+        }
+      });
+    }
+    
     primus.on('outgoing::url', function(url) {
       url.query = 'user_id=' + userId + '&' + 'auth_token=' + authToken;
     });
@@ -93,6 +104,8 @@
         if(lastNotification.created_at) notificationOffset = lastNotification.created_at;
         
         receivedNotifications(data.notifications);
+      } else if(data.type == 'announcements') {
+        receivedAnnouncements(data.announcements);
       }
     });
     
