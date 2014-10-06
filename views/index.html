@@ -109,7 +109,7 @@
     primus.on('outgoing::url', function(url) {
       getSessionId(function(id) {
         url.query = 'user_id=' + userId + '&auth_token=' + authToken + '&session_id=' + id;
-      })
+      });
     });
     
     primus.on('data', function(data) {
