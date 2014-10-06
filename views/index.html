@@ -9,10 +9,26 @@
   <script type="text/javascript" charset="utf-8">
     var primus = Primus.connect(undefined, { websockets: true, network: true, manual: true, ping: 20000 });
     var project = 'testing';
-    var userId = 12345;
+    var userId = null;
     var sessionId = null;
     var authToken = 'abcdef';
     var notificationOffset = null;
+    
+    var getSessionId = function(callback) {
+      if(sessionId) return callback(sessionId);
+      
+      var matched = document.cookie.match(/session_id=([^ ;]+)/) || [];
+      if(matched[1]) {
+        sessionId = matched[1];
+        callback(sessionId);
+      } else {
+        primus.id(function(id) {
+          sessionId = id;
+          document.cookie = 'session_id=' + sessionId + '; max-age=' + 12 * 60 * 60;
+          callback(sessionId);
+        });
+      }
+    };
     
     var subscribeTo = function(channel) {
       primus.write({
@@ -90,10 +106,13 @@
           })
         }
       });
-    }
+    };
     
     primus.on('outgoing::url', function(url) {
-      url.query = 'user_id=' + userId + '&' + 'auth_token=' + authToken;
+      getSessionId(function(id) {
+        console.log('id ', id);
+        url.query = 'user_id=' + userId + '&auth_token=' + authToken + '&session_id=' + id;
+      })
     });
     
     primus.on('data', function(data) {
@@ -115,8 +134,7 @@
       if(userId) {
         subscribeTo('users:' + userId);
       } else {
-        primus.id(function(id) {
-          sessionId = id;
+        getSessionId(function(id) {
           subscribeTo('session:' + id);
         });
       }
