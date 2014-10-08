@@ -30,8 +30,7 @@
     "strict": true,
     "maxparams": 3,
     "maxdepth": 2,
-    "maxstatements": 6,
-    "maxcomplexity": 3,
+    "maxcomplexity": 4,
     "multistr": true
   },
   "dependencies": {
