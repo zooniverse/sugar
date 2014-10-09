@@ -106,6 +106,18 @@
       });
     };
     
+    var getPresence = function(channel) {
+      if(channel) {
+        $.get('/active_users', { channel: channel }).then(function(users) {
+          console.log(users);
+        });
+      } else {
+        $.get('/presence').then(function(counts) {
+          console.log(counts);
+        });
+      }
+    };
+    
     primus.on('outgoing::url', function(url) {
       getSessionId(function(id) {
         url.query = 'user_id=' + userId + '&auth_token=' + authToken + '&session_id=' + id;
@@ -116,7 +128,7 @@
       console.log('received ', data);
       
       if(data.type == 'notifications') {
-        var lastNotification = data.notifications[data.notifications.length - 1] || { }
+        var lastNotification = data.notifications[data.notifications.length - 1] || { };
         if(lastNotification.created_at) notificationOffset = lastNotification.created_at;
         
         receivedNotifications(data.notifications);
