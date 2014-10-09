@@ -5,33 +5,10 @@
   "main": "index.js",
   "scripts": {
     "test": "exit 0",
-    "hint": "jshint --exclude=migrations/* **/*.js; exit 0"
   },
   "author": "",
   "devDependencies": {
-    "jshint": "*"
-  },
-  "jshintConfig": {
-    "node": true,
-    "bitwise": true,
-    "eqeqeq": true,
-    "forin": true,
-    "freeze": true,
-    "immed": true,
-    "latedef": true,
-    "newcap": true,
-    "noarg": true,
-    "noempty": true,
-    "nonbsp": true,
-    "nonew": true,
-    "quotmark": true,
-    "undef": true,
-    "unused": true,
-    "strict": true,
-    "maxparams": 3,
-    "maxdepth": 2,
-    "maxcomplexity": 4,
-    "multistr": true
+    "coffee-script": "^1.8.0"
   },
   "dependencies": {
     "bluebird": "2.3.2",
