@@ -9,8 +9,9 @@
   <script type="text/javascript" charset="utf-8">
     var primus = Primus.connect(undefined, { websockets: true, network: true, manual: true, ping: 20000 });
     var project = 'testing';
-    var userId = null;
+    var userId = 12345;
     var sessionId = null;
+    var userKey = null;
     var authToken = 'abcdef';
     var notificationOffset = null;
     
@@ -41,7 +42,7 @@
     
     var createNotification = function(message, url, category) {
       $.post('/notify', {
-        user_id: userId,
+        user_key: userKey,
         message: message,
         url: url,
         category: category
@@ -51,7 +52,6 @@
     var getNotifications = function(isUnread) {
       if(!isUnread) isUnread = null;
       
-      var key = userId ? 'user:' + userId : 'session:' + sessionId;
       primus.write({
         action: 'GetNotifications',
         params: {
@@ -129,12 +129,14 @@
       subscribeTo('zooniverse');
       subscribeTo('projects:' + project);
       if(userId) {
-        subscribeTo('user:' + userId);
+        userKey = 'user:' + userId;
       } else {
         getSessionId(function(id) {
-          subscribeTo('session:' + id);
+          userKey = 'session:' + sessionId;
         });
       }
+      
+      subscribeTo(userKey);
     });
     
     primus.end().open();
