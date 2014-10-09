@@ -129,7 +129,7 @@
       subscribeTo('zooniverse');
       subscribeTo('projects:' + project);
       if(userId) {
-        subscribeTo('users:' + userId);
+        subscribeTo('user:' + userId);
       } else {
         getSessionId(function(id) {
           subscribeTo('session:' + id);
