@@ -1,6 +1,10 @@
 config = require('../knexfile').test
 conn = config.connection
 process.env.SUGAR_DB = "postgres://#{ conn.user }:#{ conn.password }@#{ conn.host }/#{ conn.database }"
+process.env.SUGAR_REDIS_DB = 9
+
+RedisClient = require '../lib/redis_client'
+redis = new RedisClient()
 
 Knex = require 'knex'
 knex = new Knex config
@@ -12,4 +16,5 @@ chai.use require 'chai-spies'
 
 beforeEach ->
   knex('notifications').del().then ->
-    knex('announcements').del().exec()
+    knex('announcements').del().then ->
+      redis.flushallAsync()
