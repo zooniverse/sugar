@@ -2,6 +2,7 @@ config = require('../knexfile').test
 conn = config.connection
 process.env.SUGAR_DB = "postgres://#{ conn.user }:#{ conn.password }@#{ conn.host }/#{ conn.database }"
 process.env.SUGAR_REDIS_DB = 9
+Bluebird = require 'bluebird'
 
 RedisClient = require '../lib/redis_client'
 redis = new RedisClient()
@@ -15,6 +16,8 @@ chai.use require 'chai-http'
 chai.use require 'chai-spies'
 
 beforeEach ->
-  knex('notifications').del().then ->
-    knex('announcements').del().then ->
-      redis.flushallAsync()
+  Bluebird.all [
+    knex('notifications').del()
+    knex('announcements').del()
+    redis.flushallAsync()
+  ]
