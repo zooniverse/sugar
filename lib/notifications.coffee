@@ -6,7 +6,7 @@ class Notifications
     setInterval @clearExpired, 60 * 60 * 1000 # Clear expired once per hour
   
   create: (notification) =>
-    notification.created_at = @pg.now()
+    notification.created_at or= @pg.now()
     notification.expires_at or= @pg.fromNow 60, 'day'
     
     @pg.insert notification

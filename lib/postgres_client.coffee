@@ -12,7 +12,6 @@ class PostgresClient
         extension: 'js'
         tableName: 'migrations'
         directory: '/migrations'
-      debug: true
     
     for method in ['now', 'nowInterval', 'ago', 'fromNow', 'emptySet']
       knex[method] = this[method].bind knex
@@ -20,10 +19,10 @@ class PostgresClient
     return knex
   
   now: ->
-    @raw "now() at time zone 'utc'"
+    @raw 'now()'
   
   nowInterval: (sign, amount, unit) ->
-    @raw "#{ @now() } #{ sign } interval '#{ amount }' #{ unit }"
+    @raw "now() #{ sign } interval '#{ amount }' #{ unit }"
   
   ago: (amount, unit) ->
     @nowInterval '-', amount, unit
