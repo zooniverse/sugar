@@ -7,18 +7,21 @@ class Presence
     setInterval @clearInactive, 1 * 60 * 1000 # Clear inactive every minute
   
   userActiveOn: (channel, userKey) =>
-    return if @_isUserChannel channel
+    return Bluebird.resolve() if @_isUserChannel channel
     @redis.zaddAsync "presence:#{ channel }", +new Date(), userKey
   
   userInactiveOn: (channel, userKey) =>
-    return if @_isUserChannel channel
+    return Bluebird.resolve() if @_isUserChannel channel
     @redis.zremAsync "presence:#{ channel }", userKey
   
   clearInactive: =>
     twoMinutesAgo = -2 * 60 * 1000 + (+new Date())
     @channels().then (channels) =>
+      promises = []
       for channel in channels
-        @redis.zremrangebyscoreAsync "presence:#{ channel }", '-inf', twoMinutesAgo
+        promises.push @redis.zremrangebyscoreAsync "presence:#{ channel }", '-inf', twoMinutesAgo
+      
+      Bluebird.all promises
   
   channelCounts: =>
     deferred = Bluebird.defer()
