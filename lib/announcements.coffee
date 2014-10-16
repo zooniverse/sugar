@@ -6,9 +6,10 @@ class Announcements
   constructor: ->
     @redis = new RedisClient()
     @pg = new PostgresClient()
+    setInterval @clearExpired, 60 * 60 * 1000 # Clear expired once per hour
   
   create: (params) =>
-    params.created_at = @pg.now()
+    params.created_at or= @pg.now()
     params.expires_at or= @pg.fromNow 30, 'day'
     
     @pg.insert(params).into('announcements').returning('*').then (data) =>
@@ -39,6 +40,12 @@ class Announcements
       multi = multi.hset "announcements:#{ key }", params.spark.userKey, true
     
     multi.execAsync()
+  
+  clearExpired: =>
+    @pg 'announcements'
+      .where 'expires_at', '<', @pg.now()
+      .del()
+      .exec()
   
   _getRecords: (opts) ->
     channels = opts.channels or []

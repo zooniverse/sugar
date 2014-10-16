@@ -3,7 +3,6 @@ expect = chai.expect
 Bluebird = require 'bluebird'
 Notifications = require '../lib/notifications'
 notifications = new Notifications()
-pg = notifications.pg
 
 describe 'Notifications', ->
   create = (opts = { }) ->
