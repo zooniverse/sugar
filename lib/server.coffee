@@ -43,9 +43,13 @@ class Server
       # TO-DO: Store Panoptes authentication success, check for user:* channels
       return done()
       if req.query.user_id and req.query.auth_token
-        Panoptes.authenticator(req.query.user_id, req.query.auth_token).then (success) ->
-          return done() if success
-          done statusCode: 403, message: 'Invalid credentials'
+        Panoptes.authenticator(req.query.user_id, req.query.auth_token).then (result) ->
+          if result.success
+            done()
+          else if result.status.toString().match /^4/
+            done statusCode: 403, message: 'Invalid credentials'
+          else
+            done statusCode: 503, message: 'Something went wrong'
       else
         done statusCode: 401, message: 'Authentication required'
     

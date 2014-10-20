@@ -1,14 +1,15 @@
 # process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
 Bluebird = require 'bluebird'
 request = Bluebird.promisify require 'request'
-host = process.env.PANOPTES_HOST
+url = require 'url'
 
 module.exports =
   authenticator: (user_id, auth_token) ->
-    return true
+    unless user_id and auth_token
+      return Bluebird.resolve status: 401, success: false
     
     opts =
-      url: "#{ host }/api/me"
+      url: url.parse "#{ process.env.PANOPTES_HOST }/api/me"
       headers:
         'Content-Type': 'application/json'
         'Accept': 'application/vnd.api+json; version=1'
@@ -16,5 +17,19 @@ module.exports =
     
     request opts
       .spread (response, body) ->
-        JSON.parse(body).users[0].id is user_id.toString()
-      .catch -> false
+        if response.statusCode is 200
+          user = JSON.parse(body).users[0]
+          
+          if user.id.toString() is user_id.toString()
+            status: 200
+            success: true
+            name: user.login
+          else
+            status: response.statusCode
+            success: false
+        else
+          status: response.statusCode
+          success: false
+      .catch ->
+        status: 503
+        success: false
