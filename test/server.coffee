@@ -1,9 +1,7 @@
 chai = require 'chai'
 expect = chai.expect
 Bluebird = require 'bluebird'
-PanoptesServer = require './support/panoptes_server'
 SugarServer = require './support/sugar_server'
-Presence = require '../lib/presence'
 
 describe 'Server', ->
   sugar = null
@@ -73,5 +71,4 @@ describe 'Server', ->
           expect(sugar.presence.userActiveOn).to.have.been.called.once.with('projects:testing', 'user:1')
           done()
         
-        client.subscribeTo('projects:testing').then ->
-          client.spark().then (spark) -> spark.end()
+        client.subscribeTo('projects:testing').then -> client.end()
