@@ -168,6 +168,7 @@ class Server
   
   clientReadNotifications: (params) =>
     @notifications.markRead params.ids
+    params.spark.write type: 'response', action: 'ReadNotifications', params: { ids: params.ids }
   
   clientGetAnnouncements: (params) =>
     @announcements.get(params).then (announcements) ->
@@ -175,13 +176,16 @@ class Server
   
   clientReadAnnouncements: (params) =>
     @announcements.markRead params
+    params.spark.write type: 'response', action: 'ReadAnnouncements', params: { keys: params.keys }
   
   clientEvent: (params) =>
     payload =
+      channel: params.channel
       userKey: params.spark.userKey
       type: params.type
       data: params.data or {}
     
     @pubSub.publish "outgoing:#{ params.channel }", payload
+    params.spark.write type: 'response', action: 'Event', params: payload
 
 module.exports = Server
