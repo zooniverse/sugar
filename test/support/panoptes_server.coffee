@@ -5,9 +5,6 @@ class PanoptesServer
     PanoptesServer.mockInvalidAuth { persist }
     PanoptesServer.mockValidAuth { persist }
   
-  @unmock: ->
-    nock.restore()
-  
   # Panoptes.authenticator 1, 'invalid_auth'
   @mockInvalidAuth: ({ persist } = { persist: false }) ->
     mocked = nock(process.env.PANOPTES_HOST, reqheaders:

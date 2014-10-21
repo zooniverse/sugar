@@ -2,6 +2,7 @@ http = require 'http'
 express = require 'express'
 bodyParser = require 'body-parser'
 morgan = require 'morgan'
+Bluebird = require 'bluebird'
 Primus = require 'primus'
 Panoptes = require './panoptes'
 PubSub = require './pub_sub'
@@ -39,30 +40,34 @@ class Server
       transformer: 'engine.io'
       origins: '*'
     
-    @primus.authorize (req, done) ->
-      # TO-DO: Store Panoptes authentication success, check for user:* channels
-      return done()
-      if req.query.user_id and req.query.auth_token
-        Panoptes.authenticator(req.query.user_id, req.query.auth_token).then (result) ->
-          if result.success
-            done()
-          else if result.status.toString().match /^4/
-            done statusCode: 403, message: 'Invalid credentials'
-          else
-            done statusCode: 503, message: 'Something went wrong'
-      else
-        done statusCode: 401, message: 'Authentication required'
-    
     @primus.on 'connection', (spark) =>
       delete spark.query.user_id if spark.query.user_id is 'null'
       delete spark.query.auth_token if spark.query.auth_token is 'null'
       delete spark.query.session_id if spark.query.session_id is 'null'
-      @extendSpark spark
+      @authenticate(spark).then =>
+        @extendSpark spark
+        { userName, loggedIn, userKey } = spark
+        spark.write
+          type: 'connection'
+          userName: spark.userName
+          loggedIn: spark.loggedIn
+          userKey: spark.userKey
       
       spark.on 'data', (data) =>
         @_dispatchAction spark, data if data and data.action
     
     @primus.on 'disconnection', (spark) -> spark.isGone()
+  
+  authenticate: (spark) =>
+    deferred = Bluebird.defer()
+    Panoptes.authenticator(spark.query.user_id, spark.query.auth_token).then (result) ->
+      spark.loggedIn = result.loggedIn or false
+      spark.userName = result.user if result.loggedIn and result.user
+      deferred.resolve result
+    .catch (e) ->
+      deferred.reject e
+    
+    deferred.promise
   
   listen: (port) =>
     @server.listen port
@@ -119,7 +124,7 @@ class Server
     spark.pubSub = @pubSub
     spark.presence = @presence
     
-    if spark.query.user_id
+    if spark.loggedIn and spark.query.user_id
       spark.userKey = "user:#{ spark.query.user_id }"
     else if spark.query.session_id
       spark.userKey = "session:#{ spark.query.session_id }"
@@ -155,6 +160,7 @@ class Server
     params.spark.subscriptions.push callback
     @pubSub.subscribe params.channel, callback
     @presence.userActiveOn params.channel, params.spark.userKey
+    params.spark.write type: 'response', action: 'Subscribe', params: { channel: params.channel }
   
   clientGetNotifications: (params) =>
     @notifications.get(params).then (notifications) ->

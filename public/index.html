@@ -9,10 +9,10 @@
   <script type="text/javascript" charset="utf-8">
     var primus = Primus.connect(undefined, { websockets: true, network: true, manual: true, ping: 20000 });
     var project = 'testing';
-    var userId = 12345;
+    var userId = null;
     var sessionId = null;
     var userKey = null;
-    var authToken = 'abcdef';
+    var authToken = null;
     var notificationOffset = null;
     
     var getSessionId = function(callback) {

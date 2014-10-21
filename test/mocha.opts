@@ -1,4 +1,5 @@
 --compilers coffee:coffee-script/register
 --reporter spec
 --check-leaks
+--slow 300
 --require mocha test/index.coffee test

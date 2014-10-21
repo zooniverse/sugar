@@ -6,7 +6,7 @@ url = require 'url'
 module.exports =
   authenticator: (user_id, auth_token) ->
     unless user_id and auth_token
-      return Bluebird.resolve status: 401, success: false
+      return Bluebird.resolve status: 200, success: true, loggedIn: false
     
     opts =
       url: url.parse "#{ process.env.PANOPTES_HOST }/api/me"
@@ -24,6 +24,7 @@ module.exports =
             status: 200
             success: true
             name: user.login
+            loggedIn: true
           else
             status: response.statusCode
             success: false
