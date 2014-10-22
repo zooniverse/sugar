@@ -5,6 +5,9 @@ class Notifications
     @pg = new PostgresClient()
     setInterval @clearExpired, 60 * 60 * 1000 # Clear expired once per hour
   
+  close: =>
+    @pg.close()
+  
   create: (notification) =>
     notification.created_at or= @pg.now()
     notification.expires_at or= @pg.fromNow 60, 'day'

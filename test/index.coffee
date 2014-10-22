@@ -1,5 +1,6 @@
 config = require('../knexfile').test
 conn = config.connection
+process.env.SUGAR_TEST = true
 process.env.SUGAR_DB = "postgres://#{ conn.user }:#{ conn.password }@#{ conn.host }/#{ conn.database }"
 process.env.SUGAR_REDIS_DB = 9
 process.env.PANOPTES_HOST = 'http://sugar_test.panoptes'

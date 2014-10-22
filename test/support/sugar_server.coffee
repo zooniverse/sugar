@@ -28,9 +28,7 @@ class SugarServer
     deferred.promise
   
   @closeAll: ->
-    for sugar in SugarServer.servers
-      sugar.server.close()
-    
+    sugar.close() for sugar in SugarServer.servers
     SugarServer.servers = []
     Bluebird.resolve()
 

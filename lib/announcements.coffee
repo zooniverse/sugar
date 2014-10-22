@@ -8,6 +8,9 @@ class Announcements
     @pg = new PostgresClient()
     setInterval @clearExpired, 60 * 60 * 1000 # Clear expired once per hour
   
+  close: =>
+    @pg.close()
+  
   create: (params) =>
     params.created_at or= @pg.now()
     params.expires_at or= @pg.fromNow 30, 'day'

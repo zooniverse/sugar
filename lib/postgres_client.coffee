@@ -13,10 +13,13 @@ class PostgresClient
         tableName: 'migrations'
         directory: '/migrations'
     
-    for method in ['now', 'nowInterval', 'ago', 'fromNow', 'emptySet']
+    for method in ['close', 'now', 'nowInterval', 'ago', 'fromNow', 'emptySet']
       knex[method] = this[method].bind knex
     
     return knex
+  
+  close: ->
+    @destroy().exec()
   
   now: ->
     @raw 'now()'

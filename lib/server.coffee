@@ -27,9 +27,14 @@ class Server
     
     @listen = @listen
   
+  close: =>
+    @server.close()
+    @notifications.close()
+    @announcements.close()
+  
   _initializeApp: ->
     @app = express()
-    @app.use morgan 'dev'
+    @app.use(morgan('dev')) unless process.env.SUGAR_TEST
     @app.use bodyParser.urlencoded extended: true
     @app.use express.static 'public'
     @server = http.createServer @app
@@ -72,8 +77,9 @@ class Server
   listen: (port) =>
     @server.listen port
   
-  renderJSON: (res, json) ->
+  renderJSON: (res, json, status = 200) ->
     res.setHeader 'Content-Type', 'application/json'
+    res.statusCode = status
     res.end JSON.stringify json
   
   primusAction: (req, res) =>
@@ -83,9 +89,8 @@ class Server
     # TO-DO: Authorize notifying user
     params = req.body
     @notifications.create(params).then (notification) =>
-      @renderJSON res, notification
-      channel = if params.user_id then "user:#{ params.user_id }" else "session:#{ params.session_id }"
-      @pubSub.publish channel, notification
+      @renderJSON res, notification, 201
+      @pubSub.publish params.user_key, notification
     .catch (ex) =>
       console.error ex
       res.status 400
@@ -95,7 +100,7 @@ class Server
     # TO-DO: Authorize announcing user
     params = req.body
     @announcements.create(params).then (announcement) =>
-      @renderJSON res, announcement
+      @renderJSON res, announcement, 201
       @pubSub.publish announcement.scope, announcement
     .catch (ex) =>
       console.error ex
