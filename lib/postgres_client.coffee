@@ -19,7 +19,8 @@ class PostgresClient
     return knex
   
   close: ->
-    @destroy().exec().catch ->
+    pool = @client.pool.genericPool
+    pool.drain -> pool.destroyAllNow()
   
   now: ->
     @raw 'now()'
