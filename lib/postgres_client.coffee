@@ -19,7 +19,7 @@ class PostgresClient
     return knex
   
   close: ->
-    @destroy().exec()
+    @destroy().exec().catch ->
   
   now: ->
     @raw 'now()'
