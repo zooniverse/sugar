@@ -76,4 +76,5 @@ describe 'PubSub', ->
       fn = chai.spy()
       pubSub.subscribe('test', fn).then ->
         pubSub.publish('test', works: true).then ->
-          expect(fn).to.have.been.called.once.with works: true
+          Bluebird.delay(1).then ->
+            expect(fn).to.have.been.called.once.with works: true

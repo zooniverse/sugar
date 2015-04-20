@@ -15,5 +15,9 @@ chai.use require 'chai-http'
 chai.use require 'chai-spies'
 chai.use require 'chai-changes'
 
+nock = require 'nock'
+nock.disableNetConnect()
+nock.enableNetConnect 'localhost'
+
 beforeEach ->
   redis.flushallAsync()
