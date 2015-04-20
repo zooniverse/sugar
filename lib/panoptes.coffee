@@ -23,7 +23,7 @@ module.exports =
           if user.id.toString() is user_id.toString()
             status: 200
             success: true
-            name: user.login
+            name: user.display_name
             loggedIn: true
           else
             status: response.statusCode

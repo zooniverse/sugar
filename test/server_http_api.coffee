@@ -26,54 +26,6 @@ describe 'Server HTTP API', ->
     uri.query = params
     request method: 'GET', url: uri.format()
   
-  describe 'POST /notify', ->
-    it 'should authorize the request'
-    
-    it 'should create a notification', ->
-      sugar.notifications.create = chai.spy sugar.notifications.create
-      post '/notify',
-        user_key: 'user:1'
-        message: 'test'
-        url: 'test'
-        category: 'testing'
-      .spread (response, body) ->
-        expect(response.statusCode).to.equal 201
-        expect(sugar.notifications.create).to.have.been.called.once
-      
-    it 'should publish the notification', ->
-      sugar.pubSub.publish = chai.spy sugar.pubSub.publish
-      post '/notify',
-        user_key: 'user:1'
-        message: 'test'
-        url: 'test'
-        category: 'testing'
-      .spread (response, body) ->
-        expect(response.statusCode).to.equal 201
-        expect(sugar.pubSub.publish).to.have.been.called.once.with 'user:1'
-  
-  describe 'POST /announce', ->
-    it 'should authorize the request'
-    
-    it 'should create an announcement', ->
-      sugar.announcements.create = chai.spy sugar.announcements.create
-      post '/announce',
-        message: 'test'
-        scope: 'zooniverse'
-        category: 'testing'
-      .spread (response, body) ->
-        expect(response.statusCode).to.equal 201
-        expect(sugar.announcements.create).to.have.been.called.once
-    
-    it 'should publish the announcement', ->
-      sugar.pubSub.publish = chai.spy sugar.pubSub.publish
-      post '/announce',
-        message: 'test'
-        scope: 'zooniverse'
-        category: 'testing'
-      .spread (response, body) ->
-        expect(response.statusCode).to.equal 201
-        expect(sugar.pubSub.publish).to.have.been.called.once.with 'zooniverse'
-  
   describe 'GET /presence', ->
     it 'should respond with the number of active users on each channel', ->
       sugar.presence.channelCounts = chai.spy sugar.presence.channelCounts

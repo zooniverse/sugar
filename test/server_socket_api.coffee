@@ -34,39 +34,11 @@ describe 'Server Socket API', ->
           expect(subscription).to.be.a 'function'
           expect(subscription.channel).to.equal 'test'
           done()
-      
+    
     it 'should mark the user as active on the channel', (done) ->
       sugar.presence.userActiveOn = chai.spy sugar.presence.userActiveOn
       client.subscribeTo('test').then ->
         expect(sugar.presence.userActiveOn).to.have.been.called.once.with 'test', 'user:1'
-        done()
-  
-  describe '#clientGetNotifications', ->
-    it 'should find notifications for the user', (done) ->
-      sugar.notifications.get = chai.spy sugar.notifications.get
-      client.getNotifications().then ->
-        expect(sugar.notifications.get).to.have.been.called.once
-        done()
-  
-  describe '#clientReadAnnouncements', ->
-    it 'should mark the notifications as read for the user', (done) ->
-      sugar.notifications.markRead = chai.spy sugar.notifications.markRead
-      client.readNotifications([1, 2, 3]).then ->
-        expect(sugar.notifications.markRead).to.have.been.called.once.with [1, 2, 3]
-        done()
-  
-  describe '#clientGetAnnouncements', ->
-    it 'should find announcements for the user', (done) ->
-      sugar.announcements.get = chai.spy sugar.announcements.get
-      client.getAnnouncements().then ->
-        expect(sugar.announcements.get).to.have.been.called.once
-        done()
-  
-  describe '#clientReadAnnouncements', ->
-    it 'should mark the announcements as read for the user', (done) ->
-      sugar.announcements.markRead = chai.spy sugar.announcements.markRead
-      client.readAnnouncements([1, 2, 3]).then ->
-        expect(sugar.announcements.markRead).to.have.been.called.once
         done()
   
   describe '#clientEvent', ->

@@ -27,7 +27,7 @@ class PanoptesServer
     )
     mocked = mocked.persist() if persist
     mocked.get '/api/me'
-    .reply 200, '{"users":[{"id":1,"login":"user1"}]}',
+    .reply 200, '{"users":[{"id":1,"display_name":"user1"}]}',
       'content-type': 'application/vnd.api+json; version=1; charset=utf-8'
 
 module.exports = PanoptesServer

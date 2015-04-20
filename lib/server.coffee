@@ -6,22 +6,16 @@ Bluebird = require 'bluebird'
 Primus = require 'primus'
 Panoptes = require './panoptes'
 PubSub = require './pub_sub'
-Notifications = require './notifications'
-Announcements = require './announcements'
 Presence = require './presence'
 
 class Server
   constructor: ->
     @pubSub = new PubSub()
-    @notifications = new Notifications()
-    @announcements = new Announcements()
     @presence = new Presence()
     @_initializeApp()
     @_initializePrimus()
     
     @app.get '/primus.js', @primusAction
-    @app.post '/notify', @notifyAction
-    @app.post '/announce', @announceAction
     @app.get '/presence', @presenceAction
     @app.get '/active_users', @activeUsersAction
     
@@ -29,8 +23,6 @@ class Server
   
   close: =>
     @server.close()
-    @notifications.close()
-    @announcements.close()
   
   _initializeApp: ->
     @app = express()
@@ -84,28 +76,6 @@ class Server
   
   primusAction: (req, res) =>
     res.send @primus.library()
-  
-  notifyAction: (req, res) =>
-    # TO-DO: Authorize notifying user
-    params = req.body
-    @notifications.create(params).then (notification) =>
-      @renderJSON res, notification, 201
-      @pubSub.publish params.user_key, notification
-    .catch (ex) =>
-      console.error ex
-      res.status 400
-      @renderJSON res, success: false
-  
-  announceAction: (req, res) =>
-    # TO-DO: Authorize announcing user
-    params = req.body
-    @announcements.create(params).then (announcement) =>
-      @renderJSON res, announcement, 201
-      @pubSub.publish announcement.scope, announcement
-    .catch (ex) =>
-      console.error ex
-      res.status 400
-      @renderJSON res, success: false
   
   presenceAction: (req, res) =>
     @presence.channelCounts().then (counts) =>
@@ -166,22 +136,6 @@ class Server
     @pubSub.subscribe params.channel, callback
     @presence.userActiveOn params.channel, params.spark.userKey
     params.spark.write type: 'response', action: 'Subscribe', params: { channel: params.channel }
-  
-  clientGetNotifications: (params) =>
-    @notifications.get(params).then (notifications) ->
-      params.spark.write type: 'notifications', notifications: notifications
-  
-  clientReadNotifications: (params) =>
-    @notifications.markRead params.ids
-    params.spark.write type: 'response', action: 'ReadNotifications', params: { ids: params.ids }
-  
-  clientGetAnnouncements: (params) =>
-    @announcements.get(params).then (announcements) ->
-      params.spark.write type: 'announcements', announcements: announcements
-  
-  clientReadAnnouncements: (params) =>
-    @announcements.markRead params
-    params.spark.write type: 'response', action: 'ReadAnnouncements', params: { keys: params.keys }
   
   clientEvent: (params) =>
     payload =
