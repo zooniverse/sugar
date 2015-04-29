@@ -18,6 +18,8 @@ class Server
     @app.get '/primus.js', @primusAction
     @app.get '/presence', @presenceAction
     @app.get '/active_users', @activeUsersAction
+    @app.post '/notify', @notifyAction
+    @app.post '/announce', @announceAction
     
     @listen = @listen
   
@@ -94,6 +96,21 @@ class Server
       res.status 500
       @renderJSON res, success: false
   
+  notifyAction: (req, res) =>
+    # TO-DO: Authorize notifying user
+    params = req.body
+    for notification in params.notifications
+      userKey = "user:#{ notification.user_id }"
+      @pubSub.publish userKey, notification
+    @renderJSON res, params.notifications
+  
+  announceAction: (req, res) =>
+    # TO-DO: Authorize announcing user
+    params = req.body
+    for announcement in params.announcements
+      @pubSub.publish announcement.section, announcement
+    @renderJSON res, params.announcements
+  
   extendSpark: (spark) =>
     spark.subscriptions = []
     spark.pubSub = @pubSub
@@ -125,6 +142,7 @@ class Server
     @["client#{ call.action }"] call.params
   
   clientSubscribe: (params) =>
+    # TO-DO: authorize user access to channel
     return unless params.channel
     
     callback = ((data) ->

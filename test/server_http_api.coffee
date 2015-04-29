@@ -19,12 +19,13 @@ describe 'Server HTTP API', ->
     request
       method: 'POST'
       url: "http://localhost:#{ sugar.port }#{ path }"
+      json: true
       form: body
   
   get = (path, params) ->
     uri = url.parse "http://localhost:#{ sugar.port }#{ path }"
     uri.query = params
-    request method: 'GET', url: uri.format()
+    request method: 'GET', url: uri.format(), json: true
   
   describe 'GET /presence', ->
     it 'should respond with the number of active users on each channel', ->
@@ -39,3 +40,34 @@ describe 'Server HTTP API', ->
       get('/active_users', channel: 'testing').spread (response, body) ->
         expect(response.statusCode).to.equal 200
         expect(sugar.presence.usersOn).to.have.been.called.once.with 'testing'
+  
+  describe 'POST /notify', ->
+    it 'should authorize the request'
+    
+    it 'should publish the notification', ->
+      sugar.pubSub.publish = chai.spy sugar.pubSub.publish
+      post '/notify',
+        notifications: [
+          user_id: 1
+          message: 'test'
+          url: 'test'
+          section: 'zooniverse'
+          delivered: false
+        ]
+      .spread (response, body) ->
+        expect(response.statusCode).to.equal 200
+        expect(sugar.pubSub.publish).to.have.been.called.once.with 'user:1'
+  
+  describe 'POST /announce', ->
+    it 'should authorize the request'
+    
+    it 'should publish the announcement', ->
+      sugar.pubSub.publish = chai.spy sugar.pubSub.publish
+      post '/announce',
+        announcements: [
+          message: 'test'
+          section: 'zooniverse'
+        ]
+      .spread (response, body) ->
+        expect(response.statusCode).to.equal 200
+        expect(sugar.pubSub.publish).to.have.been.called.once.with 'zooniverse'

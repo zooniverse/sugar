@@ -10,8 +10,6 @@ class SugarClient
     
     methods = [
       'spark', 'ping', 'subscribeTo', 'sendEvent',
-      'getNotifications', 'readNotifications',
-      'getAnnouncements', 'readAnnouncements',
       'keepAliveTimer', 'hasResponse'
     ]
     
@@ -49,30 +47,6 @@ class SugarClient
     @client.write action: 'Event', params: opts
     deferred.promise
   
-  getNotifications: (opts = { }) ->
-    deferred = Bluebird.defer()
-    @client.write action: 'GetNotifications', params: opts
-    @client.once 'gotNotifications', (notifications) -> deferred.resolve notifications
-    deferred.promise
-  
-  readNotifications: (ids) ->
-    deferred = Bluebird.defer()
-    @client.write action: 'ReadNotifications', params: { ids }
-    @client.once "readNotifications::#{ ids.join '-' }", -> deferred.resolve()
-    deferred.promise
-  
-  getAnnouncements: (opts = { }) ->
-    deferred = Bluebird.defer()
-    @client.write action: 'GetAnnouncements', params: opts
-    @client.once 'gotAnnouncements', (announcements) -> deferred.resolve announcements
-    deferred.promise
-  
-  readAnnouncements: (keys) ->
-    deferred = Bluebird.defer()
-    @client.write action: 'ReadAnnouncements', params: { keys }
-    @client.once "readAnnouncements::#{ keys.join '-' }", -> deferred.resolve()
-    deferred.promise
-  
   keepAliveTimer: ->
     @client.spark().then (spark) ->
       spark.keepAliveTimer?._monotonicStartTime
@@ -84,16 +58,8 @@ class SugarClient
       when 'connection'
         @client.connection = data
         @client.emit 'connected', data
-      when 'notifications'
-        @client.emit 'gotNotifications', data
-      when 'announcements'
-        @client.emit 'gotAnnouncements', data
       when 'Subscribe'
         @client.emit "subscribedTo::#{ data.params.channel }", data
-      when 'ReadNotifications'
-        @client.emit "readNotifications::#{ data.params.ids.join '-' }"
-      when 'ReadAnnouncements'
-        @client.emit "readAnnouncements::#{ data.params.keys.join '-' }"
       when 'Event'
         @client.emit "sentEvent::#{ data.params.data.id }", data.params
 
