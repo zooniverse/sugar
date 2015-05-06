@@ -5,7 +5,8 @@ class SugarClient
     @initializePrimus()
   
   initializePrimus: ->
-    @primus = Primus.connect undefined,
+    primusKlass = if typeof Primus isnt 'undefined' then Primus else SugarClient::Primus
+    @primus = primusKlass.connect undefined,
       websockets: true
       network: true
       manual: true
@@ -72,3 +73,5 @@ class SugarClient
     @primus.write
       action: 'Event'
       params: { type, channel, data }
+
+module?.exports = SugarClient
