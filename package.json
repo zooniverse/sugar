@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "start": "npm run compile-client && coffee .",
+    "compile-client": "mkdir -p temp && coffee -b -c -o temp/ lib/client.coffee && uglifyjs temp/client.js -c -m --screw-ie8 --source-map public/client.js.map --source-map-url ./client.js.map -o public/client.js && rm -rf temp"
   },
   "author": "",
   "devDependencies": {
@@ -16,7 +18,8 @@
     "coffee-script": "^1.9.2",
     "engine.io-client": "^1.5.1",
     "mocha": "^2.2.4",
-    "nock": "^1.6.0"
+    "nock": "^1.6.0",
+    "uglify-js": "^2.4.21"
   },
   "dependencies": {
     "bluebird": "2.9.24",
@@ -27,6 +30,7 @@
     "morgan": "1.5.2",
     "primus": "3.0.2",
     "redis": "0.12.1",
-    "request": "2.55.0"
+    "request": "2.55.0",
+    "basic-auth": "1.0.1"
   }
 }

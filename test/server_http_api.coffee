@@ -15,10 +15,10 @@ describe 'Server HTTP API', ->
   afterEach ->
     SugarServer.closeAll()
   
-  post = (path, body) ->
+  post = (path, body, user, pass) ->
     request
       method: 'POST'
-      url: "http://localhost:#{ sugar.port }#{ path }"
+      url: "http://#{ user }:#{ pass }@localhost:#{ sugar.port }#{ path }"
       json: true
       form: body
   
@@ -42,7 +42,17 @@ describe 'Server HTTP API', ->
         expect(sugar.presence.usersOn).to.have.been.called.once.with 'testing'
   
   describe 'POST /notify', ->
-    it 'should authorize the request'
+    it 'should authorize the request', ->
+      post '/notify',
+        notifications: [
+          user_id: 1
+          message: 'test'
+          url: 'test'
+          section: 'zooniverse'
+          delivered: false
+        ]
+      .spread (response, body) ->
+        expect(response.statusCode).to.equal 401
     
     it 'should publish the notification', ->
       sugar.pubSub.publish = chai.spy sugar.pubSub.publish
@@ -53,13 +63,22 @@ describe 'Server HTTP API', ->
           url: 'test'
           section: 'zooniverse'
           delivered: false
-        ]
+        ],
+        'testUser', 'testPass'
       .spread (response, body) ->
         expect(response.statusCode).to.equal 200
         expect(sugar.pubSub.publish).to.have.been.called.once.with 'user:1'
   
   describe 'POST /announce', ->
-    it 'should authorize the request'
+    it 'should authorize the request', ->
+      post '/announce',
+        announcements: [
+          message: 'test'
+          section: 'zooniverse'
+        ],
+        'wrong', 'wrong'
+      .spread (response, body) ->
+        expect(response.statusCode).to.equal 401
     
     it 'should publish the announcement', ->
       sugar.pubSub.publish = chai.spy sugar.pubSub.publish
@@ -67,7 +86,8 @@ describe 'Server HTTP API', ->
         announcements: [
           message: 'test'
           section: 'zooniverse'
-        ]
+        ],
+        'testUser', 'testPass'
       .spread (response, body) ->
         expect(response.statusCode).to.equal 200
         expect(sugar.pubSub.publish).to.have.been.called.once.with 'zooniverse'

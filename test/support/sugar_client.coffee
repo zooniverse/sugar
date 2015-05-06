@@ -9,8 +9,8 @@ class SugarClient
     binding = { sugar, primus, client }
     
     methods = [
-      'spark', 'ping', 'subscribeTo', 'sendEvent',
-      'keepAliveTimer', 'hasResponse'
+      'spark', 'ping', 'subscribeTo', 'unsubscribeFrom',
+      'sendEvent', 'keepAliveTimer', 'hasResponse'
     ]
     
     client[method] = @[method].bind binding for method in methods
@@ -33,10 +33,16 @@ class SugarClient
   
   subscribeTo: (channel) ->
     deferred = Bluebird.defer()
-    @client.once "subscribedTo::#{ channel }", -> deferred.resolve()
     @client.write action: 'Subscribe', params: { channel: channel }
+    @client.once "subscribedTo::#{ channel }", -> deferred.resolve()
     deferred.promise
-    
+  
+  unsubscribeFrom: (channel) ->
+    deferred = Bluebird.defer()
+    @client.write action: 'Unsubscribe', params: { channel: channel }
+    @client.once "unsubscribedFrom::#{ channel }", -> deferred.resolve()
+    deferred.promise
+  
   sendEvent: (opts = { }) ->
     deferred = Bluebird.defer()
     @client.eventId or= 0
@@ -60,6 +66,8 @@ class SugarClient
         @client.emit 'connected', data
       when 'Subscribe'
         @client.emit "subscribedTo::#{ data.params.channel }", data
+      when 'Unsubscribe'
+        @client.emit "unsubscribedFrom::#{ data.params.channel }", data
       when 'Event'
         @client.emit "sentEvent::#{ data.params.data.id }", data.params
 

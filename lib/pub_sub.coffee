@@ -1,5 +1,6 @@
 RedisClient = require './redis_client'
 Events = require 'events'
+Events.EventEmitter.defaultMaxListeners = 0
 
 class PubSub
   constructor: ->

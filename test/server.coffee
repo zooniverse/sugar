@@ -25,11 +25,11 @@ describe 'Server', ->
         done()
     
     it 'should continue existing sessions', (done) ->
-      client = sugar.createClient 'user_id=null&auth_token=null&session_id=foo'
+      client = sugar.createClient 'user_id=null&auth_token=null'
       client.once 'connected', (connection) ->
         expect(connection.type).to.equal 'connection'
         expect(connection.loggedIn).to.be.false
-        expect(connection.userKey).to.equal 'session:foo'
+        expect(connection.userKey).to.match /^session:/
         done()
     
     describe 'heartbeat', ->

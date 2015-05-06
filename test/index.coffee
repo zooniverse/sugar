@@ -1,5 +1,7 @@
 process.env.SUGAR_TEST = true
 process.env.SUGAR_REDIS_DB = 9
+process.env.SUGAR_TALK_USERNAME = 'testUser'
+process.env.SUGAR_TALK_PASSWORD = 'testPass'
 process.env.PANOPTES_HOST = 'http://sugar_test.panoptes'
 Bluebird = require 'bluebird'
 

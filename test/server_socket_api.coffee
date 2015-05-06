@@ -30,7 +30,7 @@ describe 'Server Socket API', ->
     it 'should store the subscription on the connection', (done) ->
       client.subscribeTo('test').then ->
         client.spark().then (spark) ->
-          subscription = spark.subscriptions[0]
+          subscription = spark.subscriptions['test']
           expect(subscription).to.be.a 'function'
           expect(subscription.channel).to.equal 'test'
           done()
@@ -40,6 +40,32 @@ describe 'Server Socket API', ->
       client.subscribeTo('test').then ->
         expect(sugar.presence.userActiveOn).to.have.been.called.once.with 'test', 'user:1'
         done()
+  
+  describe '#clientUnsubscribe', ->
+    it 'should unsubscribe from the channel', (done) ->
+      sugar.pubSub.unsubscribe = chai.spy sugar.pubSub.unsubscribe
+      
+      client.subscribeTo('test').then ->
+        client.spark().then (spark) ->
+          callback = spark.subscriptions.test
+          client.unsubscribeFrom('test').then ->
+            expect(sugar.pubSub.unsubscribe).to.have.been.called.once.with 'test', callback
+            done()
+    
+    it 'should remove the subscription from the connection', (done) ->
+      client.subscribeTo('test').then ->
+        client.spark().then (spark) ->
+          client.unsubscribeFrom('test').then ->
+            subscription = spark.subscriptions['test']
+            expect(subscription).to.eql undefined
+            done()
+    
+    it 'should mark the user as inactive on the channel', (done) ->
+      sugar.presence.userInactiveOn = chai.spy sugar.presence.userInactiveOn
+      client.subscribeTo('test').then ->
+        client.unsubscribeFrom('test').then ->
+          expect(sugar.presence.userInactiveOn).to.have.been.called.once.with 'test', 'user:1'
+          done()
   
   describe '#clientEvent', ->
     it 'should proxy client generated events to redis', (done) ->
