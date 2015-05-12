@@ -69,6 +69,10 @@ class Server
     
     deferred.promise
   
+  authorize: (spark, channel) =>
+    return true unless channel.match /^(user|session)/
+    channel is spark.userKey
+  
   listen: (port) =>
     @server.listen port
   
@@ -142,9 +146,9 @@ class Server
     @["client#{ call.action }"] call.params
   
   clientSubscribe: (params) =>
-    # TO-DO: authorize user access to channel
     return unless params.channel
     return if params.spark.subscriptions[params.channel]
+    return unless @authorize(params.spark, params.channel)
     
     callback = ((data) ->
       @spark.write channel: @channel, type: data.type, data: data

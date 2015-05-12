@@ -27,6 +27,37 @@ describe 'Server Socket API', ->
         expect(sugar.pubSub.subscribe).to.have.been.called.once.with 'test'
         done()
     
+    it 'should permit the subscription to the user channel', (done) ->
+      sugar.pubSub.subscribe = chai.spy sugar.pubSub.subscribe
+      client.subscribeTo('user:1').then ->
+        expect(sugar.pubSub.subscribe).to.have.been.called.once.with 'user:1'
+        done()
+    
+    it 'should permit the subscription to the session channel', (done) ->
+      client = sugar.createClient()
+      client.once 'connected', ->
+        sessionKey = client.connection.userKey
+        sugar.pubSub.subscribe = chai.spy sugar.pubSub.subscribe
+        client.subscribeTo(sessionKey).then ->
+          expect(sugar.pubSub.subscribe).to.have.been.called.once.with sessionKey
+          done()
+    
+    it 'should not permit the subscription to other user channels', (done) ->
+      sugar.pubSub.subscribe = chai.spy sugar.pubSub.subscribe
+      client.subscribeTo 'user:2'
+      Bluebird.delay(50).then ->
+        expect(sugar.pubSub.subscribe).to.not.have.been.called()
+        done()
+    
+    it 'should not permit the subscription to other session channels', (done) ->
+      sugar.pubSub.subscribe = chai.spy sugar.pubSub.subscribe
+      client = sugar.createClient()
+      client.once 'connected', ->
+        client.subscribeTo 'somebody-else'
+        Bluebird.delay(50).then ->
+          expect(sugar.pubSub.subscribe).to.not.have.been.called()
+          done()
+    
     it 'should store the subscription on the connection', (done) ->
       client.subscribeTo('test').then ->
         client.spark().then (spark) ->
