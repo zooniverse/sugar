@@ -53,7 +53,7 @@ describe 'Server Socket API', ->
       sugar.pubSub.subscribe = chai.spy sugar.pubSub.subscribe
       client = sugar.createClient()
       client.once 'connected', ->
-        client.subscribeTo 'somebody-else'
+        client.subscribeTo 'session:somebody-else'
         Bluebird.delay(50).then ->
           expect(sugar.pubSub.subscribe).to.not.have.been.called()
           done()
