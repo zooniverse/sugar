@@ -14,7 +14,7 @@ RUN apt-get install -y supervisor
 
 RUN cd /node_app && npm install .
 
-COPY supervisor.conf /etc/supervisor/conf.d/sugar.conf
+COPY docker/supervisor.conf /etc/supervisor/conf.d/sugar.conf
 
 EXPOSE 2999
 
