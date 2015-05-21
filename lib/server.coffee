@@ -30,7 +30,8 @@ class Server
   _initializeApp: ->
     @app = express()
     @app.use(morgan('dev')) unless process.env.SUGAR_TEST
-    @app.use bodyParser.urlencoded extended: true
+    @app.use bodyParser.json()
+    @app.use bodyParser.urlencoded(extended: true)
     @app.use express.static 'public'
     @server = http.createServer @app
   
