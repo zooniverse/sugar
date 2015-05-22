@@ -9,8 +9,7 @@ describe 'PubSub', ->
   
   subscribeTo = (channel) ->
     callback = chai.spy()
-    pubSub.subscribe channel, callback
-    callback
+    pubSub.subscribe(channel, callback).then -> callback
   
   thennableSpy = ->
     deferred = Bluebird.defer()
@@ -18,15 +17,17 @@ describe 'PubSub', ->
     deferred.promise
   
   describe '#subscribe', ->
-    it 'should subscribe to a pubsub channel', ->
+    it 'should subscribe to a pubsub channel', (done) ->
       pubSub.redis.sub.subscribeAsync = chai.spy thennableSpy
-      subscribeTo 'test'
-      expect(pubSub.redis.sub.subscribeAsync).to.have.been.called.once.with 'test'
+      subscribeTo('test').then ->
+        expect(pubSub.redis.sub.subscribeAsync).to.have.been.called.once.with 'test'
+        done()
     
-    it 'should subscribe to a pubsub pattern', ->
+    it 'should subscribe to a pubsub pattern', (done) ->
       pubSub.redis.sub.psubscribeAsync = chai.spy thennableSpy
-      subscribeTo 'test:*'
-      expect(pubSub.redis.sub.psubscribeAsync).to.have.been.called.once.with 'test:*'
+      subscribeTo('test:*').then ->
+        expect(pubSub.redis.sub.psubscribeAsync).to.have.been.called.once.with 'test:*'
+        done()
     
     it 'should add a listener to a single channel', ->
       pubSub.emitter.on = chai.spy thennableSpy
@@ -41,29 +42,43 @@ describe 'PubSub', ->
         expect(pubSub.emitter.on).to.have.been.called.once.with 'test:*', fn
   
   describe '#unsubscribe', ->
-    it 'should unsubscribe from a pubsub channel', ->
-      fn = subscribeTo 'test'
-      pubSub.redis.sub.unsubscribeAsync = chai.spy thennableSpy
-      pubSub.unsubscribe 'test', fn
-      expect(pubSub.redis.sub.unsubscribeAsync).to.have.been.called.once.with 'test'
+    it 'should unsubscribe from a pubsub channel', (done) ->
+      subscribeTo('test').then (fn) ->
+        pubSub.redis.sub.unsubscribeAsync = chai.spy thennableSpy
+        pubSub.unsubscribe 'test', fn
+        expect(pubSub.redis.sub.unsubscribeAsync).to.have.been.called.once.with 'test'
+        done()
     
-    it 'should unsubscribe from a pubsub pattern', ->
-      fn = subscribeTo 'test:*'
-      pubSub.redis.sub.punsubscribeAsync = chai.spy thennableSpy
-      pubSub.unsubscribe 'test:*', fn
-      expect(pubSub.redis.sub.punsubscribeAsync).to.have.been.called.once.with 'test:*'
+    it 'should unsubscribe from a pubsub pattern', (done) ->
+      subscribeTo('test:*').then (fn) ->
+        pubSub.redis.sub.punsubscribeAsync = chai.spy thennableSpy
+        pubSub.unsubscribe 'test:*', fn
+        expect(pubSub.redis.sub.punsubscribeAsync).to.have.been.called.once.with 'test:*'
+        done()
     
-    it 'should remove a listener from a single channel', ->
-      fn = subscribeTo 'test'
-      pubSub.emitter.removeListener = chai.spy thennableSpy
-      pubSub.unsubscribe('test', fn).then ->
-        expect(pubSub.emitter.removeListener).to.have.been.called.once.with 'test', fn
+    it 'should remove a listener from a single channel', (done) ->
+      subscribeTo('test').then (fn) ->
+        pubSub.emitter.removeListener = chai.spy thennableSpy
+        pubSub.unsubscribe('test', fn).then ->
+          expect(pubSub.emitter.removeListener).to.have.been.called.once.with 'test', fn
+          done()
     
-    it 'should remove a listener from a pattern', ->
-      fn = subscribeTo 'test:*'
-      pubSub.emitter.removeListener = chai.spy thennableSpy
-      pubSub.unsubscribe('test:*', fn).then ->
-        expect(pubSub.emitter.removeListener).to.have.been.called.once.with 'test:*', fn
+    it 'should remove a listener from a pattern', (done) ->
+      subscribeTo('test:*').then (fn) ->
+        pubSub.emitter.removeListener = chai.spy thennableSpy
+        pubSub.unsubscribe('test:*', fn).then ->
+          expect(pubSub.emitter.removeListener).to.have.been.called.once.with 'test:*', fn
+          done()
+    
+    it 'should only unsubscribe from redis when no subscribers remain', (done) ->
+      Bluebird.all([subscribeTo('test'), subscribeTo('test')]).then (callbacks) ->
+        [fn1, fn2] = callbacks
+        pubSub.redis.sub.unsubscribeAsync = chai.spy thennableSpy
+        pubSub.unsubscribe 'test', fn1
+        expect(pubSub.redis.sub.unsubscribeAsync).to.not.have.been.called()
+        pubSub.unsubscribe 'test', fn2
+        expect(pubSub.redis.sub.unsubscribeAsync).to.have.been.called()
+        done()
   
   describe '#publish', ->
     it 'should publish a messsage to a channel', ->

@@ -22,8 +22,9 @@ class PubSub
   
   unsubscribe: (pattern, fn) =>
     method = if pattern.match(/\*|\[|\]|\?/) then 'punsubscribe' else 'unsubscribe'
-    @redis.sub["#{ method }Async"](pattern).then =>
-      @emitter.removeListener pattern, fn
+    @emitter.removeListener pattern, fn
+    listeners = @emitter._events[pattern]?.length or 0
+    @redis.sub["#{ method }Async"](pattern) if listeners is 0
   
   publish: (channel, message) =>
     @redis.pub.publishAsync channel, JSON.stringify(message)
