@@ -35,7 +35,7 @@ class SugarClient
       @loggedIn = data.loggedIn
       @userKey = data.userKey
       @subscriptions[@userKey] = true
-      @__subscribeToChannels()
+      setTimeout @__subscribeToChannels, 100
     else
       @emit data
   

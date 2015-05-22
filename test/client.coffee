@@ -119,8 +119,10 @@ describe 'SugarClient', ->
       it 'should add user subscription', ->
         expect(userClient.subscriptions).to.include key: true
       
-      it 'should subscribe to channels', ->
-        expect(userClient.__subscribeToChannels).to.have.been.called()
+      it 'should subscribe to channels', (done) ->
+        Bluebird.delay(100).then ->
+          expect(userClient.__subscribeToChannels).to.have.been.called()
+          done()
   
   describe '#subscribeTo', ->
     beforeEach ->
