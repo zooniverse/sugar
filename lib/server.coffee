@@ -42,8 +42,11 @@ class Server
       origins: '*'
     
     @primus.on 'connection', (spark) =>
+      clearTimeout spark.keepAliveTimer if spark.keepAliveTimer
+      spark.keepAliveTimer = null
       delete spark.query.user_id if spark.query.user_id is 'null'
       delete spark.query.auth_token if spark.query.auth_token is 'null'
+      
       @authenticate(spark).then =>
         @extendSpark spark
         { userName, loggedIn, userKey } = spark
@@ -129,6 +132,8 @@ class Server
       spark.userKey = "session:#{ spark.id }"
     
     spark.isGone = (->
+      clearTimeout @keepAliveTimer if @keepAliveTimer
+      @keepAliveTimer = null
       for channel, subscription of @subscriptions
         @pubSub.unsubscribe channel, subscription
         @presence.userInactiveOn channel, @userKey

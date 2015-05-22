@@ -50,6 +50,15 @@ describe 'Server', ->
               done()
   
   describe 'disconnecting', ->
+    it 'should clear the keepAliveTimer', (done) ->
+      client = sugar.createClient()
+      client.spark().then (spark) ->
+        client.ping().then ->
+          expect(spark.keepAliveTimer).to.not.eql null
+          spark.end()
+          expect(spark.keepAliveTimer).to.eql null
+          done()
+    
     it 'should unsubscribe from all channels', (done) ->
       client = sugar.createClient 'user_id=1&auth_token=valid_auth'
       client.once 'connected', ->
