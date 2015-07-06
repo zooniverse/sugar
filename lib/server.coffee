@@ -101,7 +101,7 @@ class Server
   activeUsersAction: (req, res) =>
     params = req.query
     @presence.usersOn(params.channel).then (users) =>
-      @renderJSON res, users
+      @renderJSON res, users: (id: id for id in users)
     .catch (ex) =>
       console.error ex
       res.status 500
