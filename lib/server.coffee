@@ -8,6 +8,7 @@ Panoptes = require './panoptes'
 PubSub = require './pub_sub'
 Presence = require './presence'
 basicAuth = require './basic_auth'
+cors = require './cors'
 
 class Server
   constructor: ->
@@ -30,6 +31,7 @@ class Server
   _initializeApp: ->
     @app = express()
     @app.use(morgan('dev')) unless process.env.SUGAR_TEST
+    @app.use cors
     @app.use bodyParser.json()
     @app.use bodyParser.urlencoded(extended: true)
     @app.use express.static 'public'
