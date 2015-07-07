@@ -1,3 +1,4 @@
+newrelic = require 'newrelic'
 http = require 'http'
 express = require 'express'
 bodyParser = require 'body-parser'
@@ -151,7 +152,10 @@ class Server
   _dispatchAction: (spark, call) =>
     call.params or= { }
     call.params.spark = spark
-    @["client#{ call.action }"] call.params
+    action = newrelic.createWebTransaction "sugar/#{ call.action.toLowerCase() }", (data) =>
+      @["client#{ call.action }"] call.params
+      newrelic.endTransaction()
+    action()
   
   clientSubscribe: (params) =>
     return unless params.channel
