@@ -22,6 +22,7 @@ class Server
     @app.get '/active_users', @activeUsersAction
     @app.post '/notify', basicAuth, @notifyAction
     @app.post '/announce', basicAuth, @announceAction
+    @app.post '/experiment', basicAuth, @experimentAction
     
     @listen = @listen
   
@@ -108,19 +109,23 @@ class Server
       @renderJSON res, success: false
   
   notifyAction: (req, res) =>
-    params = req.body
-    for notification in params.notifications
-      userKey = "user:#{ notification.user_id }"
-      notification.type = 'notification'
-      @pubSub.publish userKey, notification
-    @renderJSON res, params.notifications
+    @_sendMessage req, res, 'notifications', 'notification', (message) ->
+      "user:#{ message.user_id }"
   
   announceAction: (req, res) =>
+    @_sendMessage req, res, 'announcements', 'announcement', (message) ->
+      message.section
+  
+  experimentAction: (req, res) =>
+    @_sendMessage req, res, 'experiments', 'experiment', (message) ->
+      "user:#{ message.user_id }"
+  
+  _sendMessage: (req, res, key, type, channelFor) =>
     params = req.body
-    for announcement in params.announcements
-      announcement.type = 'announcement'
-      @pubSub.publish announcement.section, announcement
-    @renderJSON res, params.announcements
+    for message in params[key]
+      message.type = type
+      @pubSub.publish channelFor(message), message
+    @renderJSON res, params[key]
   
   extendSpark: (spark) =>
     spark.subscriptions = { }

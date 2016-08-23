@@ -91,3 +91,32 @@ describe 'Server HTTP API', ->
       .spread (response, body) ->
         expect(response.statusCode).to.equal 200
         expect(sugar.pubSub.publish).to.have.been.called.once.with 'zooniverse'
+  
+  describe 'POST /experiment', ->
+    it 'should authorize the request', ->
+      post '/experiment',
+        experiments: [
+          user_id: 1
+          message: 'test'
+          url: 'test'
+          section: 'zooniverse'
+          delivered: false
+        ]
+      .spread (response, body) ->
+        expect(response.statusCode).to.equal 401
+    
+    it 'should publish the experiment', ->
+      sugar.pubSub.publish = chai.spy sugar.pubSub.publish
+      post '/experiment',
+        experiments: [
+          user_id: 1
+          message: 'test'
+          url: 'test'
+          section: 'zooniverse'
+          delivered: false
+        ],
+        'testUser', 'testPass'
+      .spread (response, body) ->
+        expect(response.statusCode).to.equal 200
+        expect(sugar.pubSub.publish).to.have.been.called.once.with 'user:1'
+
