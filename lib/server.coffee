@@ -9,6 +9,7 @@ PubSub = require './pub_sub'
 Presence = require './presence'
 basicAuth = require './basic_auth'
 cors = require './cors'
+new_relic = require 'newrelic'
 
 class Server
   constructor: ->

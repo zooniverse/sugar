@@ -40,6 +40,7 @@
     "npm": "^1.4"
   },
   "scripts": {
-    "start": "export NODE_ENV=development; check-engines && ./node_modules/.bin/coffee index.coffee"
+    "start": "export NODE_ENV=development; check-engines && ./node_modules/.bin/coffee index.coffee",
+    "test": "check-engines && ./node_modules/mocha/bin/mocha"
   }
 }
