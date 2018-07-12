@@ -39,7 +39,19 @@ The 3 types of messages the system accepts are:
 Construct per user notification payloads in JSON and use something like cURL to POST the payload to the notifications server. 
 E.g.
 ``` bash
-curl -H "Content-Type: application/json" -d '{"notifications": [{"user_id": "1", "message": "manual test from curl", "url": "test", "section": "zooniverse", "delivered": "false"}]}' https://basic:auth@notifications-staging.zooniverse.org/notify
+curl -vv \
+     -X "POST" "https://notifications-staging.zooniverse.org/notify" \
+     -H 'Content-Type: application/json' \
+     -u 'username:password' \
+     -d $'{
+  "notifications": [{
+    "message": "A message from curl to user 1",
+    "section": "zooniverse",
+    "user_id": "1",
+    "url": "http://test.net",
+    "delivered": false
+  }]
+}'
 ```
 
 # Debugging
