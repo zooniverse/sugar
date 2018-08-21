@@ -24,7 +24,7 @@ All requests to the post end points must include a formatted message body for th
 The 3 types of messages the system accepts are:
 1. Notifications
     ``` JSON
-    {"notifications": [{"user_id": "1", "message": "Hiya", "url": "test", "section": "zooniverse", "delivered": "false"}]}
+    {"notifications": [{"user_id": "1", "message": "Hiya", "url": "test", "delivered": "false"}]}
     ```
 0. Announcements
    ``` JSON
@@ -32,7 +32,7 @@ The 3 types of messages the system accepts are:
    ```
 0. Experiments
    ``` JSON
-   {"experiments": [{"user_id": "1", "message": "would you like to participate?", "url": "test", "section": "zooniverse", "delivered": "false"}]}
+   {"experiments": [{"user_id": "1", "message": "would you like to participate?", "url": "test", "delivered": "false"}]}
    ```
 
 # Manual testing of notifications
@@ -46,7 +46,6 @@ curl -vv \
      -d $'{
   "notifications": [{
     "message": "A message from curl to user 1",
-    "section": "zooniverse",
     "user_id": "1",
     "url": "http://test.net",
     "delivered": false
