@@ -32,7 +32,7 @@
     "morgan": "1.5.2",
     "newrelic": "^4.11.0",
     "primus": "3.0.2",
-    "redis": "0.12.1",
+    "redis": "2.8.0",
     "request": "2.55.0"
   },
   "engines": {
