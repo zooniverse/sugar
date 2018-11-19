@@ -33,7 +33,7 @@
     "newrelic": "^4.11.0",
     "primus": "3.0.2",
     "redis": "0.12.1",
-    "request": "2.55.0"
+    "request": "2.88.0"
   },
   "engines": {
     "node": "^0.10",
