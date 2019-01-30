@@ -1,6 +1,8 @@
+[![pullreminders](https://pullreminders.com/badge.svg)](https://pullreminders.com?ref=badge)
+
 # What is Sugar?
-Sugar is a server side event notification system to deliver event data payloads to subscribed clients. 
-By default it will attempt to connect the client to the server using websockets and will fall back to long polling. 
+Sugar is a server side event notification system to deliver event data payloads to subscribed clients.
+By default it will attempt to connect the client to the server using websockets and will fall back to long polling.
 
 See https://github.com/zooniverse/Sugar-Client for the client implementation details.
 
@@ -36,7 +38,7 @@ The 3 types of messages the system accepts are:
    ```
 
 # Manual testing of notifications
-Construct per user notification payloads in JSON and use something like cURL to POST the payload to the notifications server. 
+Construct per user notification payloads in JSON and use something like cURL to POST the payload to the notifications server.
 E.g.
 ``` bash
 curl -vv \
