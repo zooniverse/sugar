@@ -16,7 +16,7 @@
     "chai-http": "^1.0.0",
     "chai-spies": "^0.5.1",
     "coffee-script": "^1.9.2",
-    "engine.io-client": "^1.5.1",
+    "engine.io-client": "^3.3.2",
     "mocha": "^2.2.4",
     "nock": "^1.6.0",
     "uglify-js": "^2.4.21"
