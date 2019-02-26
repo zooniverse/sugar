@@ -1,0 +1,15 @@
+version: '3'
+services:
+  sugar:
+    build: .
+    ports:
+      - "2999:2999"
+    environment:
+      - SUGAR_TALK_USERNAME=sugar
+      - SUGAR_TALK_PASSWORD=sugar
+      - SUGAR_REDIS_HOST=redis
+    depends_on:
+      - redis
+
+  redis:
+    image: redis
