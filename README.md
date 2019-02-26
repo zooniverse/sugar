@@ -63,5 +63,5 @@ To Run a local version of the sugar system
   + `docker-compose build`
   + `docker-compose up`
 
-Run run the tests
+Run run the tests (you may need to rebuild the docker image if the src changes)
   + `docker-compose run -T --rm --entrypoint="npm test" sugar`
