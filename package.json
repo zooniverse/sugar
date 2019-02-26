@@ -3,11 +3,6 @@
   "version": "0.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {
-    "test": "mocha",
-    "start": "npm run compile-client && coffee .",
-    "compile-client": "mkdir -p temp && coffee -b -c -o temp/ lib/client.coffee && uglifyjs temp/client.js -c -m --screw-ie8 --source-map public/client.js.map --source-map-url ./client.js.map -o public/client.js && rm -rf temp"
-  },
   "author": "",
   "devDependencies": {
     "chai": "^2.2.0",
@@ -30,17 +25,18 @@
     "express": "4.12.3",
     "hiredis": "0.5.0",
     "morgan": "1.5.2",
-    "newrelic": "^1.37.2",
+    "newrelic": "^4.11.0",
     "primus": "3.0.2",
     "redis": "0.12.1",
     "request": "2.55.0"
   },
   "engines": {
-    "node": "^0.10",
-    "npm": "^1.4"
+    "node": "^6.16",
+    "npm": "^3.10"
   },
   "scripts": {
-    "start": "export NODE_ENV=development; check-engines && ./node_modules/.bin/coffee index.coffee",
-    "test": "check-engines && ./node_modules/mocha/bin/mocha"
+    "start": "export NODE_ENV=development; ./node_modules/.bin/check-engines && ./node_modules/.bin/coffee index.coffee",
+    "test": "./node_modules/.bin/check-engines && ./node_modules/.bin/mocha",
+    "compile-client": "mkdir -p temp && ./node_modules/.bin/coffee -b -c -o temp/ lib/client.coffee && ./node_modules/.bin/uglifyjs temp/client.js -c -m --screw-ie8 --source-map public/client.js.map --source-map-url ./client.js.map -o public/client.js && rm -rf temp"
   }
 }
