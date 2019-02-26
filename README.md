@@ -57,3 +57,11 @@ curl -vv \
 
 # Debugging
 Visit https://notifications-staging.zooniverse.org/ for debug user & testing section announcements and user notifications.
+
+# Development via docker & docker-compose
+To Run a local version of the sugar system
+  + `docker-compose build`
+  + `docker-compose up`
+
+Run run the tests (you may need to rebuild the docker image if the src changes)
+  + `docker-compose run -T --rm --entrypoint="npm test" sugar`
