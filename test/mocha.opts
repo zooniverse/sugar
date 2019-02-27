@@ -1,5 +1,7 @@
---compilers coffee:coffee-script/register
 --reporter spec
 --check-leaks
 --slow 300
---require mocha test/index.coffee test
+--require coffeescript/register
+--file test/index.coffee
+--recursive
+--extension coffee
