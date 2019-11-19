@@ -1,6 +1,10 @@
 services:
   - docker
 
+branches:
+  only:
+  - master
+
 before_install:
  - docker-compose build
 
