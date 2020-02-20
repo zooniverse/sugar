@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sugar-staging-app
+  labels:
+    app: sugar-staging-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sugar-staging-app
+  template:
+    metadata:
+      labels:
+        app: sugar-staging-app
+    spec:
+      containers:
+        - name: sugar-staging-app
+          image: zooniverse/sugar:__IMAGE_TAG__
+          volumeMounts:
+            - name: sugar-staging
+              mountPath: "/node_app/lib/config.json"
+              subPath: "config.json"
+              readOnly: true
+      volumes:
+        - name: sugar-staging
+          secret:
+            secretName: sugar-staging
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sugar-staging-app
+spec:
+  selector:
+    app: sugar-staging-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: NodePort
