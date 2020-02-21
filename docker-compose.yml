@@ -4,6 +4,9 @@ services:
     build: .
     ports:
       - "2999:2999"
+    volumes:
+      - node_modules:/node_app/node_modules
+      - ./:/node_app
     environment:
       - SUGAR_TALK_USERNAME=sugar
       - SUGAR_TALK_PASSWORD=sugar
@@ -13,3 +16,6 @@ services:
 
   redis:
     image: redis
+
+volumes:
+  node_modules:
