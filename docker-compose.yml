@@ -3,7 +3,7 @@ services:
   sugar:
     build: .
     ports:
-      - "2999:2999"
+      - "2999:80"
     volumes:
       - node_modules:/node_app/node_modules
       - ./:/node_app
