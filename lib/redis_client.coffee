@@ -14,7 +14,13 @@ class RedisClient
     auth = process.env.SUGAR_REDIS_AUTH
     db = process.env.SUGAR_REDIS_DB or 1
 
-    client = Redis.createClient(port, host, {auth_pass: auth, tls: {servername: host}})
+    # redis in test / dev doesn't have a TLS proxy in front of it
+    auth_opts = if process.env.SUGAR_ENV
+      { auth_pass: auth, tls: { servername: host } }
+    else
+      {}
+
+    client = Redis.createClient(port, host, auth_opts)
     client.select db
     return client
 
