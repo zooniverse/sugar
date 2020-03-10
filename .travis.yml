@@ -9,4 +9,4 @@ before_install:
  - docker-compose build
 
 script:
-  - docker-compose run -T --rm --entrypoint="npm test" sugar
+  - docker-compose run -T --rm sugar npm test
