@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sugar-production-app
+  labels:
+    app: sugar-production-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sugar-production-app
+  template:
+    metadata:
+      labels:
+        app: sugar-production-app
+    spec:
+      containers:
+        - name: sugar-production-app
+          image: zooniverse/sugar:__IMAGE_TAG__
+          volumeMounts:
+            - name: sugar-production-
+              mountPath: "/node_app/lib/config.json"
+              subPath: "config.json"
+              readOnly: true
+      volumes:
+        - name: sugar-production
+          secret:
+            secretName: sugar-production
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sugar-production-app
+spec:
+  selector:
+    app: sugar-production-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: NodePort
