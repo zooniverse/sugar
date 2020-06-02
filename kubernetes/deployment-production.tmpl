@@ -20,10 +20,10 @@ spec:
           resources:
             requests:
               memory: "750Mi"
-              cpu: "200m"
-            limits:
-              memory: "750Mi"
               cpu: "500m"
+            limits:
+              memory: "1500Mi"
+              cpu: "1000m"
           volumeMounts:
             - name: sugar-production
               mountPath: "/node_app/lib/config.json"
