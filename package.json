@@ -12,7 +12,7 @@
     "chai-spies": "^0.5.1",
     "coffeescript": "^2.3.2",
     "engine.io-client": "^3.3.2",
-    "mocha": "^6.0.2",
+    "mocha": "^7.2.0",
     "nock": "^10.0.6",
     "uglify-js": "^2.4.21"
   },
