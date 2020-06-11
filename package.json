@@ -24,13 +24,13 @@
     "engine.io": "^3.3.2",
     "express": "^4.16.4",
     "morgan": "^1.9.1",
-    "newrelic": "^6.9.0",
+    "newrelic": "^4.11.0",
     "primus": "^6.1.0",
     "redis": "^3.0.2",
     "request": "^2.88.0"
   },
   "engines": {
-    "node": "^12.14",
+    "node": "^11.10",
     "npm": "^6.7"
   },
   "scripts": {
