@@ -31,11 +31,12 @@ describe 'Server', ->
         expect(connection.userKey).to.match /^session:/
 
     describe 'heartbeat', ->
-      it 'should keep the connection active', ->
+      it.only 'should keep the connection active', =>
         client = sugar.createClient 'user_id=1&auth_token=valid_auth'
 
-        client.ping().then ->
-          expect(client.keepAliveTimer).to.change.when(client.ping)
+        client.pong().then ->
+          expect(client.keepAliveTimer).to.change.when(client.pong)
+
 
       it 'should mark the user as active', ->
         client = sugar.createClient 'user_id=1&auth_token=valid_auth'
@@ -50,7 +51,7 @@ describe 'Server', ->
     it 'should clear the keepAliveTimer', ->
       client = sugar.createClient()
       client.spark().then (spark) ->
-        client.ping().then ->
+        client.pong().then ->
           expect(spark.keepAliveTimer).to.not.eql null
           spark.end()
           expect(spark.keepAliveTimer).to.eql null
