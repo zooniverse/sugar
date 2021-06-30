@@ -30,8 +30,8 @@
     "request": "^2.88.0"
   },
   "engines": {
-    "node": "^11.10",
-    "npm": "^6.7"
+    "node": "^10.24",
+    "npm": "^6.14"
   },
   "scripts": {
     "start": "export NODE_ENV=development; ./node_modules/.bin/check-engines && ./node_modules/.bin/coffee index.coffee",
