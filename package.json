@@ -21,7 +21,7 @@
     "bluebird": "2.9.24",
     "body-parser": "^1.18.3",
     "check-engines": "^1.5.0",
-    "engine.io": "^3.5.0",
+    "engine.io": "^4.1.2",
     "express": "^4.16.4",
     "morgan": "^1.9.1",
     "newrelic": "^4.11.0",
