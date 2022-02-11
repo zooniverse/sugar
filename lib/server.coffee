@@ -43,7 +43,8 @@ class Server
       pathname: '/sugar'
       transformer: 'engine.io'
       origins: '*'
-    
+      transport: { allowEIO3: true }
+
     @primus.on 'connection', (spark) =>
       clearTimeout spark.keepAliveTimer if spark.keepAliveTimer
       spark.keepAliveTimer = null
