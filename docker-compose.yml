@@ -12,6 +12,7 @@ services:
       - SUGAR_TALK_USERNAME=sugar
       - SUGAR_TALK_PASSWORD=sugar
       - SUGAR_REDIS_HOST=redis
+      - REVISION=123-fake-revision-456
     depends_on:
       - redis
 
