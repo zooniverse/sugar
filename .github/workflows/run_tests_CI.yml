@@ -1,0 +1,16 @@
+name: Zooni CI
+on:
+  pull_request:
+  push: { branches: master }
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build docker containers and run tests
+        run: |
+          docker-compose build
+          docker-compose run -T --rm sugar npm test
+
+
