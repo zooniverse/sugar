@@ -67,4 +67,4 @@ Run run the tests (you may need to rebuild the docker image if the src changes)
   + `docker-compose run -T --rm sugar npm test`
 
 Get a bash container via docker to run tests, etc
-`docker-compose run --rm sugar bash`
+`docker-compose run --service-ports --rm sugar bash`
