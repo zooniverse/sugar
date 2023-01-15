@@ -14,7 +14,7 @@
     "engine.io-client": "^4.1.4",
     "mocha": "^7.2.0",
     "nock": "^13.3.0",
-    "uglify-js": "^2.4.21"
+    "uglify-js": "^3.17.4"
   },
   "dependencies": {
     "basic-auth": "2.0.1",
