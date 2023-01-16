@@ -130,7 +130,7 @@ describe 'SugarClient', ->
     it 'should disallow duplicates', ->
       userClient.subscribeTo 'foo'
       userClient.subscribeTo 'foo'
-      expect(userClient.__subscribeTo).to.have.been.called.once()
+      expect(userClient.__subscribeTo).to.have.been.called.once
 
     it 'should store subscriptions', ->
       userClient.subscribeTo 'foo'
@@ -190,8 +190,8 @@ describe 'SugarClient', ->
 
     it 'should call listeners', ->
       userClient.emit type: 'event1', works: true
-      expect(callback1).to.have.been.called.once().with type: 'event1', works: true
-      expect(callback2).to.have.been.called.once().with type: 'event1', works: true
+      expect(callback1).to.have.been.called.once.with type: 'event1', works: true
+      expect(callback2).to.have.been.called.once.with type: 'event1', works: true
 
     it 'should not call other listeners', ->
       userClient.emit type: 'event2', works: true
