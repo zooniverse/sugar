@@ -24,7 +24,7 @@
     "engine.io": "^4.1.2",
     "express": "^4.16.4",
     "morgan": "^1.9.1",
-    "newrelic": "^4.11.0",
+    "newrelic": "^9.7.5",
     "primus": "^6.1.0",
     "redis": "^3.0.2",
     "request": "^2.88.2"
