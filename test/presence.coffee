@@ -95,10 +95,10 @@ describe 'Presence', ->
     it 'should list the number of active users on active channels', ->
       createSamples().then ->
         presence.channelCounts().then (counts) ->
-          expect(counts).to.include channel: 'zooniverse', count: 3
-          expect(counts).to.include channel: 'test1', count: 1
-          expect(counts).to.include channel: 'test2', count: 1
-          expect(counts).to.include channel: 'test3', count: 1
+          expect(counts).to.deep.include channel: 'zooniverse', count: 3
+          expect(counts).to.deep.include channel: 'test1', count: 1
+          expect(counts).to.deep.include channel: 'test2', count: 1
+          expect(counts).to.deep.include channel: 'test3', count: 1
   
   describe '#usersOn', ->
     it 'should list the active users on a channel', ->
