@@ -6,7 +6,7 @@ WORKDIR /node_app
 
 COPY package.json /node_app/
 COPY package-lock.json /node_app/
-RUN npm install .
+RUN npm ci
 
 COPY . /node_app
 
