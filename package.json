@@ -35,7 +35,7 @@
   },
   "scripts": {
     "start": "export NODE_ENV=development; ./node_modules/.bin/check-engines && ./docker/start.sh",
-    "test": "./node_modules/.bin/check-engines && ./node_modules/.bin/mocha",
+    "test": "check-engines && mocha",
     "compile-client": "mkdir -p temp && ./node_modules/.bin/coffee -b -c -o temp/ lib/client.coffee && ./node_modules/.bin/uglifyjs temp/client.js -c -m --source-map \"filename='public/client.js',url='./client.js.map'\" -o public/client.js && rm -rf temp"
   }
 }
