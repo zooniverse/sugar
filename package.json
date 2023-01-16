@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "basic-auth": "2.0.1",
-    "bluebird": "2.9.24",
+    "bluebird": "3.7.2",
     "body-parser": "^1.18.3",
     "check-engines": "^1.5.0",
     "engine.io": "^4.1.2",
