@@ -1,8 +1,0 @@
---reporter spec
---check-leaks
---slow 300
---require coffeescript/register
---file test/index.coffee
---recursive
---extension coffee
---exit
