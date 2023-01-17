@@ -39,8 +39,8 @@ describe('Server', function() {
     return describe('heartbeat', function() {
       it('should keep the connection active', function() {
         client = sugar.createClient('user_id=1&auth_token=valid_auth');
-        return client.ping().then(function() {
-          return expect(client.keepAliveTimer).to.change.when(client.ping);
+        return client.pong().then(function() {
+          return expect(client.keepAliveTimer).to.change.when(client.pong);
         });
       });
       return it('should mark the user as active', function() {
@@ -48,7 +48,7 @@ describe('Server', function() {
         sugar.presence.userActiveOn = chai.spy(sugar.presence.userActiveOn);
         return client.once('connected', function() {
           return client.subscribeTo('zooniverse').then(function() {
-            return client.ping().then(function() {
+            return client.pong().then(function() {
               return expect(sugar.presence.userActiveOn).to.have.been.called.with('zooniverse', 'user:1').at.least.once;
             });
           });
@@ -60,7 +60,7 @@ describe('Server', function() {
     it('should clear the keepAliveTimer', function() {
       client = sugar.createClient();
       return client.spark().then(function(spark) {
-        return client.ping().then(function() {
+        return client.pong().then(function() {
           expect(spark.keepAliveTimer).to.not.eql(null);
           spark.end();
           return expect(spark.keepAliveTimer).to.eql(null);
