@@ -43,5 +43,5 @@ nock.disableNetConnect();
 nock.enableNetConnect('localhost');
 
 beforeEach(function() {
-  return redis.flushallAsync();
+  return redis.flushAll();
 });
