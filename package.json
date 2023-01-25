@@ -24,7 +24,7 @@
     "morgan": "^1.9.1",
     "newrelic": "^9.7.5",
     "primus": "^8.0.7",
-    "redis": "^3.0.2",
+    "redis": "^4.6.0",
     "request": "^2.88.2"
   },
   "engines": {
