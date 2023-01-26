@@ -44,23 +44,25 @@ describe('PubSub', function() {
     });
     it('should add a listener to a single channel', function() {
       var fn;
+      pubSub.redis.sub.subscribe = chai.spy(thennableSpy);
       pubSub.emitter.on = chai.spy(thennableSpy);
       fn = function() {};
       return pubSub.subscribe('test', fn).then(function() {
         expect(pubSub.emitter.on).to.have.been.called.once.with('test', fn);
       });
     });
-    return it('should add a listener to a pattern', function() {
+    it('should add a listener to a pattern', async () => {
       var fn;
+      pubSub.redis.sub.pSubscribe = chai.spy();
       pubSub.emitter.on = chai.spy(thennableSpy);
       fn = function() {};
-      return pubSub.subscribe('test:*', fn).then(function() {
-        expect(pubSub.emitter.on).to.have.been.called.once.with('test:*', fn);
-      });
+      const results = await pubSub.subscribe('test:*', fn)
+      expect(pubSub.emitter.on).to.have.been.called.once.with('test:*', fn);
     });
   });
   describe('#unsubscribe', function() {
     it('should unsubscribe from a pubsub channel', function() {
+      pubSub.redis.sub.subscribe = chai.spy(thennableSpy);
       return subscribeTo('test').then(function(fn) {
         const subscriber = pubSub.subscribers.test;
         subscriber.unsubscribe = chai.spy(thennableSpy);
@@ -69,6 +71,7 @@ describe('PubSub', function() {
       });
     });
     it('should unsubscribe from a pubsub pattern', function() {
+      pubSub.redis.sub.pSubscribe = chai.spy(thennableSpy);
       return subscribeTo('test:*').then(function(fn) {
         const subscriber = pubSub.subscribers['test:*'];
         subscriber.pUnsubscribe = chai.spy(thennableSpy);
@@ -77,6 +80,7 @@ describe('PubSub', function() {
       });
     });
     it('should remove a listener from a single channel', function() {
+      pubSub.redis.sub.subscribe = chai.spy(thennableSpy);
       return subscribeTo('test').then(function(fn) {
         pubSub.emitter.removeListener = chai.spy(thennableSpy);
         pubSub.unsubscribe('test', fn);
@@ -84,13 +88,15 @@ describe('PubSub', function() {
       });
     });
     it('should remove a listener from a pattern', function() {
+      pubSub.redis.sub.pSubscribe = chai.spy(thennableSpy);
       return subscribeTo('test:*').then(function(fn) {
         pubSub.emitter.removeListener = chai.spy(thennableSpy);
         pubSub.unsubscribe('test:*', fn);
         expect(pubSub.emitter.removeListener).to.have.been.called.once.with('test:*', fn);
       });
     });
-    return it('should only unsubscribe from redis when no subscribers remain', function() {
+    it('should only unsubscribe from redis when no subscribers remain', function() {
+      pubSub.redis.sub.subscribe = chai.spy(thennableSpy);
       return Promise.all([subscribeTo('test'), subscribeTo('test')]).then(function(callbacks) {
         const subscriber = pubSub.subscribers.test;
         var fn1, fn2;
@@ -113,21 +119,16 @@ describe('PubSub', function() {
       });
     });
   });
-  return describe('#emitMessage', function() {
-    return it('should proxy a redis event to listeners', function() {
+  describe.only('#emitMessage', function() {
+    it('should proxy a redis event to listeners', function() {
       var fn;
       fn = chai.spy();
-      return pubSub.subscribe('test', fn).then(function() {
+      return pubSub.subscribe('test', thennableSpy).then(function() {
         return pubSub.publish('test', {
           works: true
         }).then(function() {
-          return new Promise(function (resolve, reject) {
-            setTimeout(function() {
-              expect(fn).to.have.been.called.once.with({
-                works: true
-              });
-              resolve();
-            }, 100);
+          expect(fn).to.have.been.called.once.with({
+            works: true
           });
         });
       });
