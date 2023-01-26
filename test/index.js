@@ -19,6 +19,7 @@ process.env.PANOPTES_HOST = 'http://sugar_test.panoptes';
 RedisClient = require('../lib/redis_client');
 
 redis = new RedisClient();
+redis.connect();
 
 PanoptesServer = require('./support/panoptes_server');
 
@@ -43,5 +44,5 @@ nock.disableNetConnect();
 nock.enableNetConnect('localhost');
 
 beforeEach(function() {
-  return redis.flushallAsync();
+  return redis.flushAll();
 });
