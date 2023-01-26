@@ -29,16 +29,14 @@ describe('PubSub', function() {
   };
   describe('#subscribe', function() {
     it('should subscribe to a pubsub channel', function() {
-      pubSub.redis.sub.subscribe = chai.spy(thennableSpy);
       return subscribeTo('test').then(function() {
-        const subscriber = pubSub.subscribers.test;
+        const subscriber = pubSub.channelSubscribers.test;
         expect(subscriber).to.exist;
       });
     });
     it('should subscribe to a pubsub pattern', function() {
-      pubSub.redis.sub.pSubscribe = chai.spy(thennableSpy);
       return subscribeTo('test:*').then(function() {
-        const subscriber = pubSub.subscribers['test:*'];
+        const subscriber = pubSub.channelSubscribers['test:*'];
         expect(subscriber).to.exist;
       });
     });
@@ -62,7 +60,7 @@ describe('PubSub', function() {
   describe('#unsubscribe', function() {
     it('should unsubscribe from a pubsub channel', function() {
       return subscribeTo('test').then(function(fn) {
-        const subscriber = pubSub.subscribers.test;
+        const subscriber = pubSub.channelSubscribers.test;
         subscriber.unsubscribe = chai.spy(thennableSpy);
         pubSub.unsubscribe('test', fn);
         expect(subscriber.unsubscribe).to.have.been.called.once.with('test');
@@ -70,7 +68,7 @@ describe('PubSub', function() {
     });
     it('should unsubscribe from a pubsub pattern', function() {
       return subscribeTo('test:*').then(function(fn) {
-        const subscriber = pubSub.subscribers['test:*'];
+        const subscriber = pubSub.channelSubscribers['test:*'];
         subscriber.pUnsubscribe = chai.spy(thennableSpy);
         pubSub.unsubscribe('test:*', fn);
         expect(subscriber.pUnsubscribe).to.have.been.called.once.with('test:*');
@@ -92,7 +90,7 @@ describe('PubSub', function() {
     });
     return it('should only unsubscribe from redis when no subscribers remain', function() {
       return Promise.all([subscribeTo('test'), subscribeTo('test')]).then(function(callbacks) {
-        const subscriber = pubSub.subscribers.test;
+        const subscriber = pubSub.channelSubscribers.test;
         var fn1, fn2;
         [fn1, fn2] = callbacks;
         subscriber.unsubscribe = chai.spy(thennableSpy);
@@ -105,11 +103,11 @@ describe('PubSub', function() {
   });
   describe('#publish', function() {
     return it('should publish a messsage to a channel', function() {
-      pubSub.redis.pub.publish = chai.spy(thennableSpy);
+      pubSub.publisher.publish = chai.spy(thennableSpy);
       return pubSub.publish('test', {
         works: true
       }).then(function() {
-        return expect(pubSub.redis.pub.publish).to.have.been.called.once.with('test', '{"works":true}');
+        return expect(pubSub.publisher.publish).to.have.been.called.once.with('test', '{"works":true}');
       });
     });
   });
