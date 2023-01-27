@@ -58,13 +58,13 @@ curl -vv \
 The `examples` directory has some example scripts. Replace `USER` and `PASSWORD` with the username and password for the staging service:
 
 <dl>
-  <dt>`sugar-announce.sh`</dt>
+   <dt><code>sugar-announce.sh</code></dt>
   <dd>Send an announcement to a Zooniverse project.</dd>
-  <dt>`sugar-messages.sh`</dt>
+  <dt><code>sugar-messages.sh</code></dt>
   <dd>Send a message to a user ID</dd>
-  <dt>`sugar-notify.sh`</dt>
+  <dt><code>sugar-notify.sh</code></dt>
   <dd>Send a notification to a user ID</dd>
-  <dt>`sugar-subjects.sh`</dt>
+  <dt><code>sugar-subjects.sh</code></dt>
   <dd>Inject specific subjects into the classification queue for a user ID (PFE only.)</dd>
 </dl>
 
