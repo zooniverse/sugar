@@ -58,6 +58,8 @@ curl -vv \
 The `examples` directory has two example scripts. Replace `USER` and `PASSWORD` with the username and password for the staging service:
 
 <dl>
+  <dt>`sugar-announce.sh`</dt>
+  <dd>Send an announcement to a Zooniverse project.</dd>
   <dt>`sugar-messages.sh`</dt>
   <dd>Send a message to a user ID</dd>
   <dt>`sugar-notify.sh`</dt>
