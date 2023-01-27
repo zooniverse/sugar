@@ -60,6 +60,8 @@ The `examples` directory has two example scripts. Replace `USER` and `PASSWORD` 
 <dl>
   <dt>`sugar-messages.sh`</dt>
   <dd>Send a message to a user ID</dd>
+  <dt>`sugar-notify.sh`</dt>
+  <dd>Send a notification to a user ID</dd>
   <dt>`sugar-subjects.sh`</dt>
   <dd>Inject specific subjects into the classification queue for a user ID (PFE only.)</dd>
 </dl>
