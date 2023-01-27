@@ -6,7 +6,7 @@ By default it will attempt to connect the client to the server using websockets 
 
 See https://github.com/zooniverse/Sugar-Client for the client implementation details.
 
-# How it works
+## How it works
 The server is a wrapper around Redis pub/sub (https://redis.io/topics/pubsub) and real time events (https://github.com/primus/primus#engineio) connections all via a HTTP API.
 
 The HTTP end points are:
@@ -37,7 +37,7 @@ The 3 types of messages the system accepts are:
    {"experiments": [{"user_id": "1", "message": "would you like to participate?", "url": "test", "delivered": "false"}]}
    ```
 
-# Manual testing of notifications
+## Manual testing of notifications
 Construct per user notification payloads in JSON and use something like cURL to POST the payload to the notifications server.
 E.g.
 ``` bash
@@ -55,10 +55,23 @@ curl -vv \
 }'
 ```
 
-# Debugging
+The `examples` directory has two example scripts. Replace `USER` and `PASSWORD` with the username and password for the staging service:
+
+<dl>
+  <dt>`sugar-announce.sh`</dt>
+  <dd>Send an announcement to a Zooniverse project.</dd>
+  <dt>`sugar-messages.sh`</dt>
+  <dd>Send a message to a user ID</dd>
+  <dt>`sugar-notify.sh`</dt>
+  <dd>Send a notification to a user ID</dd>
+  <dt>`sugar-subjects.sh`</dt>
+  <dd>Inject specific subjects into the classification queue for a user ID (PFE only.)</dd>
+</dl>
+
+## Debugging
 Visit https://notifications-staging.zooniverse.org/ for debug user & testing section announcements and user notifications.
 
-# Development via docker & docker-compose
+## Development via docker & docker-compose
 To Run a local version of the sugar system
   + `docker-compose build`
   + `docker-compose up`
