@@ -55,7 +55,7 @@ curl -vv \
 }'
 ```
 
-The `examples` directory has two example scripts. Replace `USER` and `PASSWORD` with the username and password for the staging service:
+The `examples` directory has some example scripts. Replace `USER` and `PASSWORD` with the username and password for the staging service:
 
 <dl>
   <dt>`sugar-announce.sh`</dt>
