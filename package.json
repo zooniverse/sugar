@@ -16,6 +16,7 @@
     "uglify-js": "^3.17.4"
   },
   "dependencies": {
+    "@sentry/node": "^7.36.0",
     "basic-auth": "2.0.1",
     "body-parser": "^1.18.3",
     "check-engines": "^1.5.0",
@@ -29,7 +30,7 @@
   },
   "engines": {
     "node": "^18.13",
-    "npm": "^8.19"
+    "npm": ">=8.19"
   },
   "scripts": {
     "start": "export NODE_ENV=development; ./node_modules/.bin/check-engines && ./docker/start.sh",
