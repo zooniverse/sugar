@@ -20,13 +20,11 @@ describe('Presence', function() {
     return presence.userInactiveOn(channel, user);
   };
   activeOn = function(channel) {
-    return presence.redis.zrangebyscoreAsync(`presence:${channel}`, '-inf', '+inf', 'withscores').then(function(list) {
-      var i, j, key, len, users;
-      users = {};
-      for (i = j = 0, len = list.length; j < len; i = j += 2) {
-        key = list[i];
-        users[key] = +list[i + 1];
-      }
+    return presence.redis.zRangeByScoreWithScores(`presence:${channel}`, '-inf', '+inf').then(function(list) {
+      const users = {};
+      list.forEach(function ({ value, score }) {
+        users[value] = score;
+      })
       return users;
     });
   };
@@ -45,14 +43,14 @@ describe('Presence', function() {
     });
     it('should reject user channels', function() {
       return active('user:123', 'user:123').then(function() {
-        return presence.redis.existsAsync('presence:user:123').then(function(result) {
+        return presence.redis.exists('presence:user:123').then(function(result) {
           return expect(result).to.equal(0);
         });
       });
     });
     return it('should reject session channels', function() {
       return active('session:123', 'session:123').then(function() {
-        return presence.redis.existsAsync('presence:session:123').then(function(result) {
+        return presence.redis.exists('presence:session:123').then(function(result) {
           return expect(result).to.equal(0);
         });
       });
@@ -60,7 +58,7 @@ describe('Presence', function() {
   });
   describe('#userInactiveOn', function() {
     it('should set a user as inactive on a channel', function() {
-      return presence.redis.zaddAsync('presence:zooniverse', 123, 'user:123').then(function() {
+      return presence.redis.zAdd('presence:zooniverse', { score: 123, value: 'user:123' }).then(function() {
         return inactive('user:123', 'zooniverse').then(function() {
           return activeOn('zooniverse').then(function(users) {
             return expect(users).to.not.have.property('user:123');
@@ -69,7 +67,7 @@ describe('Presence', function() {
       });
     });
     it('should reject user channels', function() {
-      return presence.redis.zaddAsync('presence:user:123', 123, 'user:123').then(function() {
+      return presence.redis.zAdd('presence:user:123', { score: 123, value: 'user:123' }).then(function() {
         return inactive('user:123', 'user:123').then(function() {
           return activeOn('user:123').then(function(users) {
             return expect(users).to.have.property('user:123');
@@ -78,7 +76,7 @@ describe('Presence', function() {
       });
     });
     return it('should reject session channels', function() {
-      return presence.redis.zaddAsync('presence:session:123', 123, 'session:123').then(function() {
+      return presence.redis.zAdd('presence:session:123', { score: 123, value: 'session:123' }).then(function() {
         return inactive('session:123', 'session:123').then(function() {
           return activeOn('session:123').then(function(sessions) {
             return expect(sessions).to.have.property('session:123');
@@ -91,8 +89,8 @@ describe('Presence', function() {
     return it('should remove inactive users', function() {
       var oldDate;
       oldDate = +new Date() - 3 * 60 * 1000; // 3 minutes ago
-      return presence.redis.zaddAsync('presence:zooniverse', oldDate, 'user:1').then(function() {
-        return presence.redis.zaddAsync('presence:zooniverse', +new Date(), 'user:2').then(function() {
+      return presence.redis.zAdd('presence:zooniverse', { score: oldDate, value: 'user:1' }).then(function() {
+        return presence.redis.zAdd('presence:zooniverse', { score: +new Date(), value: 'user:2' }).then(function() {
           return presence.clearInactive().then(function() {
             return activeOn('zooniverse').then(function(users) {
               expect(users).to.not.have.property('user:1');
