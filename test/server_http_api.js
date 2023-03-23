@@ -1,68 +1,79 @@
-var SugarServer, chai, expect, request, url;
+const chai = require('chai');
 
-chai = require('chai');
+const expect = chai.expect;
 
-expect = chai.expect;
+const URL = require('url');
 
-url = require('url');
-
-const { promisify } = require('util');
-request = promisify(require('request'));
-
-SugarServer = require('./support/sugar_server');
+const SugarServer = require('./support/sugar_server');
+const PanoptesServer = require('./support/panoptes_server');
 
 describe('Server HTTP API', function() {
-  var get, post, sugar;
-  sugar = null;
+  let sugar = null;
+
   beforeEach(function() {
+    PanoptesServer.mock();
     return SugarServer.create().then(function(server) {
       return sugar = server;
     });
   });
+
   afterEach(function() {
     return SugarServer.closeAll();
   });
-  post = function(path, body, user, pass) {
-    return request({
-      method: 'POST',
-      url: `http://${user}:${pass}@localhost:${sugar.port}${path}`,
-      json: true,
-      form: body
-    });
+
+  function post(path, body, user, pass) {
+    const headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Basic ' + Buffer.from(`${user}:${pass}`).toString('base64')
+    };
+    return fetch(
+      `http://localhost:${sugar.port}${path}`,
+      {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(body)
+      }
+    );
   };
-  get = function(path, params) {
-    var uri;
-    uri = url.parse(`http://localhost:${sugar.port}${path}`);
+
+  function get(path, params) {
+    const uri = URL.parse(`http://localhost:${sugar.port}${path}`);
     uri.query = params;
-    return request({
-      method: 'GET',
-      url: uri.format(),
-      json: true
-    });
+    const headers = {
+      'Content-Type': 'application/json'
+    };
+    return fetch(
+      uri.format(),
+      {
+        method: 'GET',
+        headers
+      }
+    );
   };
+
   describe('GET /presence', function() {
-    return it('should respond with the number of active users on each channel', function() {
-      sugar.presence.channelCounts = chai.spy(sugar.presence.channelCounts);
-      return get('/presence').then(function (response) {
-        expect(response.statusCode).to.equal(200);
-        return expect(sugar.presence.channelCounts).to.have.been.called.once;
-      });
+    it('should respond with the number of active users on each channel', async function() {
+      const response = await get('/presence');
+      expect(response.status).to.equal(200);
+      const body = await response.json();
+      expect(body).to.deep.equal([]);
     });
   });
+
   describe('GET /active_users', function() {
-    return it('should respond with the logged in users on a channel', function() {
-      sugar.presence.usersOn = chai.spy(sugar.presence.usersOn);
-      return get('/active_users', {
+    it('should respond with the logged in users on a channel', async function() {
+      const response = await get('/active_users', {
         channel: 'testing'
-      }).then(function (response) {
-        expect(response.statusCode).to.equal(200);
-        return expect(sugar.presence.usersOn).to.have.been.called.once.with('testing');
       });
+      expect(response.status).to.equal(200);
+      const body = await response.json();
+      expect(body.users).to.deep.equal([]);
     });
   });
+
   describe('POST /notify', function() {
-    it('should authorize the request', function() {
-      return post('/notify', {
+    it('should authorize the request', async function() {
+      const response = await post('/notify', {
         notifications: [
           {
             user_id: 1,
@@ -72,13 +83,12 @@ describe('Server HTTP API', function() {
             delivered: false
           }
         ]
-      }).then(function (response) {
-        return expect(response.statusCode).to.equal(401);
       });
+      expect(response.status).to.equal(401);
     });
-    return it('should publish the notification', function() {
-      sugar.pubSub.publish = chai.spy(sugar.pubSub.publish);
-      return post('/notify', {
+
+    it('should publish the notification', async function() {
+      const response = await post('/notify', {
         notifications: [
           {
             user_id: 1,
@@ -88,43 +98,57 @@ describe('Server HTTP API', function() {
             delivered: false
           }
         ]
-      }, 'testUser', 'testPass').then(function (response) {
-        expect(response.statusCode).to.equal(200);
-        return expect(sugar.pubSub.publish).to.have.been.called.once.with('user:1');
-      });
+      }, 'testUser', 'testPass');
+      expect(response.status).to.equal(200);
+      const body = await response.json();
+      expect(body).to.deep.equal([
+        {
+          user_id: 1,
+          message: 'test',
+          url: 'test',
+          section: 'zooniverse',
+          delivered: false,
+          type: 'notification'
+        }
+      ]);
     });
   });
+
   describe('POST /announce', function() {
-    it('should authorize the request', function() {
-      return post('/announce', {
+    it('should authorize the request', async function() {
+      const response = await post('/announce', {
         announcements: [
           {
             message: 'test',
             section: 'zooniverse'
           }
         ]
-      }, 'wrong', 'wrong').then(function (response) {
-        return expect(response.statusCode).to.equal(401);
-      });
+      }, 'wrong', 'wrong');
+      expect(response.status).to.equal(401);
     });
-    return it('should publish the announcement', function() {
-      sugar.pubSub.publish = chai.spy(sugar.pubSub.publish);
-      return post('/announce', {
+
+    it('should publish the announcement', async function() {
+      const response = await post('/announce', {
         announcements: [
           {
             message: 'test',
             section: 'zooniverse'
           }
         ]
-      }, 'testUser', 'testPass').then(function (response) {
-        expect(response.statusCode).to.equal(200);
-        return expect(sugar.pubSub.publish).to.have.been.called.once.with('zooniverse');
-      });
+      }, 'testUser', 'testPass');
+      expect(response.status).to.equal(200);
+      const body = await response.json();
+      expect(body).to.deep.equal([{
+        message: 'test',
+        section: 'zooniverse',
+        type: 'announcement'
+      }]);
     });
   });
-  return describe('POST /experiment', function() {
-    it('should authorize the request', function() {
-      return post('/experiment', {
+
+  describe('POST /experiment', function() {
+    it('should authorize the request', async function() {
+      const response = await post('/experiment', {
         experiments: [
           {
             user_id: 1,
@@ -134,13 +158,12 @@ describe('Server HTTP API', function() {
             delivered: false
           }
         ]
-      }).then(function (response) {
-        return expect(response.statusCode).to.equal(401);
       });
+      expect(response.status).to.equal(401);
     });
-    return it('should publish the experiment', function() {
-      sugar.pubSub.publish = chai.spy(sugar.pubSub.publish);
-      return post('/experiment', {
+
+    it('should publish the experiment', async function() {
+      const response = await post('/experiment', {
         experiments: [
           {
             user_id: 1,
@@ -150,10 +173,19 @@ describe('Server HTTP API', function() {
             delivered: false
           }
         ]
-      }, 'testUser', 'testPass').then(function (response) {
-        expect(response.statusCode).to.equal(200);
-        return expect(sugar.pubSub.publish).to.have.been.called.once.with('user:1');
-      });
+      }, 'testUser', 'testPass');
+      expect(response.status).to.equal(200);
+      const body = await response.json();
+      expect(body).to.deep.equal([
+        {
+          user_id: 1,
+          message: 'test',
+          url: 'test',
+          section: 'zooniverse',
+          delivered: false,
+          type: 'experiment'
+        }
+      ]);
     });
   });
 });

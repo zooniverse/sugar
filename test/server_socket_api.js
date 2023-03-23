@@ -1,16 +1,16 @@
-var SugarServer, chai, expect;
+const chai = require('chai');
 
-chai = require('chai');
+const expect = chai.expect;
 
-expect = chai.expect;
-
-SugarServer = require('./support/sugar_server');
+const SugarServer = require('./support/sugar_server');
+const PanoptesServer = require('./support/panoptes_server');
 
 describe('Server Socket API', function() {
   var client, sugar;
   sugar = null;
   client = null;
   beforeEach(function() {
+    PanoptesServer.mock();
     return SugarServer.create().then(function(server) {
       sugar = server;
       client = sugar.createClient('user_id=1&auth_token=valid_auth');
