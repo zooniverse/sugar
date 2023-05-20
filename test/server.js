@@ -1,18 +1,24 @@
 var SugarServer, chai, expect;
+const jwt = require('jsonwebtoken');
 
 chai = require('chai');
 
 expect = chai.expect;
 
 SugarServer = require('./support/sugar_server');
-const PanoptesServer = require('./support/panoptes_server');
 
 describe('Server', function() {
   var client, sugar;
   sugar = null;
   client = null;
   beforeEach(function() {
-    PanoptesServer.mock();
+    const data = {
+      id: 1,
+      dname: 'user1'
+    };
+    jwt.verify = chai.spy(() => {
+      return { data }
+    });
     return SugarServer.create().then(function(server) {
       return sugar = server;
     });

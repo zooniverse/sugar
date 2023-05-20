@@ -1,18 +1,20 @@
 const chai = require('chai');
+const jwt = require('jsonwebtoken');
 
 const expect = chai.expect;
-
-const PanoptesServer = require('./support/panoptes_server');
 
 const Panoptes = require('../lib/panoptes');
 
 describe('Panoptes', function() {
-  beforeEach(function () {
-    PanoptesServer.mock();
-  })
-
   return describe('#authenticator', function() {
     it('should authenticate a user', function() {
+      const data = {
+        id: 1,
+        dname: 'user1'
+      };
+      jwt.verify = chai.spy(() => {
+        return { data }
+      });
       return Panoptes.authenticator(1, 'valid_auth').then(function(response) {
         expect(response.status).to.equal(200);
         expect(response.success).to.be.true;
@@ -22,17 +24,11 @@ describe('Panoptes', function() {
     });
 
     it('should not authenticate invalid credentials', function() {
+      jwt.verify = chai.spy(() => {
+        throw new Error('invalid token');
+      });
       return Panoptes.authenticator(1, 'invalid_auth').then(function(response) {
         expect(response.status).to.equal(401);
-        expect(response.success).to.be.false;
-        expect(response).to.not.have.property('loggedIn');
-        return expect(response).to.not.have.property('name');
-      });
-    });
-
-    it('should fail gracefully when the server is down', function() {
-      return Panoptes.authenticator(1, 'down_auth').then(function(response) {
-        expect(response.status).to.equal(503);
         expect(response.success).to.be.false;
         expect(response).to.not.have.property('loggedIn');
         return expect(response).to.not.have.property('name');
