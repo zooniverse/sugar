@@ -12,8 +12,7 @@
     "chai-spies": "^1.0.0",
     "engine.io-client": "^6.3.0",
     "mocha": "^10.2.0",
-    "uglify-js": "^3.17.4",
-    "undici": "^5.21.0"
+    "uglify-js": "^3.17.4"
   },
   "dependencies": {
     "@sentry/node": "^7.36.0",
