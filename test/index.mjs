@@ -31,7 +31,7 @@ const chai = {
 };
 
 global.chai = chai;
-global.expect = baseChai.expect;
+global.expect = chai.expect;
 
 beforeEach(function() {
   return redis.flushAll();
