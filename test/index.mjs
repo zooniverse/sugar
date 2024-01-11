@@ -1,7 +1,6 @@
 import RedisClient from '../lib/redis_client.js';
 import * as baseChai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import chaiHttp from 'chai-http';
 import chaiSpies from 'chai-spies';
 import chaiChanges from 'chai-changes';
 
@@ -26,7 +25,6 @@ redis.connect();
 
 const chai = {
   ...baseChai,
-  ...baseChai.use(chaiHttp),
   ...baseChai.use(chaiSpies),
   ...baseChai.use(chaiChanges),
   ...baseChai.use(chaiAsPromised)
