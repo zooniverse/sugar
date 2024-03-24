@@ -1,3 +1,9 @@
+import RedisClient from '../lib/redis_client.js';
+import * as baseChai from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+import chaiSpies from 'chai-spies';
+import chaiChanges from 'chai-changes';
+
 process.env.NEW_RELIC_ENABLED = false;
 
 process.env.NEW_RELIC_NO_CONFIG_FILE = true;
@@ -14,20 +20,18 @@ process.env.SUGAR_TALK_PASSWORD = 'testPass';
 
 process.env.PANOPTES_HOST = 'http://sugar_test.panoptes';
 
-const RedisClient = require('../lib/redis_client');
-
 const redis = new RedisClient();
 redis.connect();
 
-const chai = require('chai');
+const chai = {
+  ...baseChai,
+  ...baseChai.use(chaiSpies),
+  ...baseChai.use(chaiChanges),
+  ...baseChai.use(chaiAsPromised)
+};
 
-chai.use(require('chai-as-promised'));
-
-chai.use(require('chai-http'));
-
-chai.use(require('chai-spies'));
-
-chai.use(require('chai-changes'));
+global.chai = chai;
+global.expect = chai.expect;
 
 beforeEach(function() {
   return redis.flushAll();

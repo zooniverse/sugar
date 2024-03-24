@@ -1,11 +1,6 @@
-var SugarServer, chai, expect;
-const jwt = require('jsonwebtoken');
-
-chai = require('chai');
-
-expect = chai.expect;
-
-SugarServer = require('./support/sugar_server');
+import jwt from 'jsonwebtoken';
+import URL from 'url';
+import SugarServer from './support/sugar_server.js';
 
 describe('Server', function() {
   var client, sugar;

@@ -1,13 +1,7 @@
-var MockPrimus, SugarClient, chai, expect,
-  hasProp = {}.hasOwnProperty;
+import SugarClient from '../lib/client.js';
+import MockPrimus from './support/mock_primus.js';
 
-chai = require('chai');
-
-expect = chai.expect;
-
-SugarClient = require('../lib/client');
-
-MockPrimus = require('./support/mock_primus');
+const hasProp = {}.hasOwnProperty;
 
 describe('SugarClient', function() {
   var callback1, callback2, originalConsole, sessionClient, setupEvents, userClient;
