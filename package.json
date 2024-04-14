@@ -6,7 +6,6 @@
   "author": "",
   "devDependencies": {
     "chai": "^5.1.0",
-    "chai-as-promised": "^7.1.1",
     "chai-changes": "^1.3.4",
     "chai-spies": "^1.0.0",
     "engine.io-client": "^6.3.0",
@@ -37,7 +36,6 @@
     "compile-client": "./node_modules/.bin/uglifyjs lib/client.js -c -m --source-map \"filename='public/client.js',url='./client.js.map'\" -o public/client.js && rm -rf temp"
   },
   "overrides": {
-    "chai": "^5.1.0",
     "superagent": "^8.0.8"
   }
 }

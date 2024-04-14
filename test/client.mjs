@@ -57,23 +57,23 @@ describe('SugarClient', function() {
   });
   describe('#primusUrl', function() {
     describe('when logged in', function() {
-      return it('should set the query string', function() {
+      it('should set the query string', function() {
         var baseUrl;
         baseUrl = {
           query: null
         };
         userClient.primusUrl(baseUrl);
-        return expect(baseUrl.query).to.eql('user_id=user&auth_token=auth');
+        expect(baseUrl.query).to.eql('user_id=user&auth_token=auth');
       });
     });
-    return describe('when not logged in', function() {
-      return it('should not set the query string', function() {
+    describe('when not logged in', function() {
+      it('should not set the query string', function() {
         var baseUrl;
         baseUrl = {
           query: null
         };
         sessionClient.primusUrl(baseUrl);
-        return expect(baseUrl.query).to.be(null);
+        expect(baseUrl.query).to.eql(null);
       });
     });
   });
