@@ -1,6 +1,6 @@
 FROM node:20-slim
 
-ENV DEBIAN_FRONTEND noninteractive
+ENV DEBIAN_FRONTEND=noninteractive
 
 WORKDIR /node_app
 
