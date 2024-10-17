@@ -1,12 +1,6 @@
-var Presence, chai, expect, presence;
+import Presence from '../lib/presence.js';
 
-chai = require('chai');
-
-expect = chai.expect;
-
-Presence = require('../lib/presence');
-
-presence = new Presence();
+let presence = new Presence();
 
 describe('Presence', function() {
   var active, activeOn, createSamples, inactive;

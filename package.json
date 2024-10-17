@@ -5,12 +5,10 @@
   "main": "index.js",
   "author": "",
   "devDependencies": {
-    "chai": "^4.3.7",
-    "chai-as-promised": "^7.1.1",
+    "chai": "^5.1.0",
     "chai-changes": "^1.3.4",
-    "chai-http": "^4.2.1",
     "chai-spies": "^1.0.0",
-    "engine.io-client": "^6.3.0",
+    "engine.io-client": "~6.6.0",
     "mocha": "^10.2.0",
     "uglify-js": "^3.17.4"
   },
@@ -19,12 +17,12 @@
     "basic-auth": "2.0.1",
     "body-parser": "^1.18.3",
     "check-engines": "^1.5.0",
-    "engine.io": "^6.3.1",
+    "engine.io": "~6.6.0",
     "express": "^4.16.4",
     "express-rate-limit": "^7.0.1",
     "jsonwebtoken": "^9.0.0",
     "morgan": "^1.9.1",
-    "newrelic": "^11.0.0",
+    "newrelic": "^12.5.1",
     "primus": "^8.0.7",
     "redis": "^4.6.4"
   },
@@ -36,8 +34,5 @@
     "start": "export NODE_ENV=development; ./node_modules/.bin/check-engines && ./docker/start.sh",
     "test": "check-engines && mocha",
     "compile-client": "./node_modules/.bin/uglifyjs lib/client.js -c -m --source-map \"filename='public/client.js',url='./client.js.map'\" -o public/client.js && rm -rf temp"
-  },
-  "overrides": {
-    "superagent": "^8.0.8"
   }
 }

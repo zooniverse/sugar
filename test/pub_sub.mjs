@@ -1,12 +1,6 @@
-var PubSub, chai, expect, pubSub;
+import PubSub from '../lib/pub_sub.js';
 
-chai = require('chai');
-
-expect = chai.expect;
-
-PubSub = require('../lib/pub_sub');
-
-pubSub = new PubSub();
+let pubSub = new PubSub();
 
 describe('PubSub', function() {
   var subscribeTo, thennableSpy;

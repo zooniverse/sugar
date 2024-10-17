@@ -1,10 +1,6 @@
-const chai = require('chai');
-const jwt = require('jsonwebtoken');
-const Sentry = require('@sentry/node');
-
-const expect = chai.expect;
-
-const Panoptes = require('../lib/panoptes');
+import jwt from 'jsonwebtoken';
+import * as Sentry from '@sentry/node';
+import Panoptes from '../lib/panoptes.js';
 
 describe('Panoptes', function() {
   return describe('#authenticator', function() {
@@ -28,7 +24,7 @@ describe('Panoptes', function() {
       jwt.verify = chai.spy(() => {
         throw new Error('invalid token');
       });
-      Sentry.captureException = chai.spy();
+      chai.spy.on(Sentry, 'captureException');
       return Panoptes.authenticator(1, 'invalid_auth').then(function(response) {
         expect(response.status).to.equal(401);
         expect(response.success).to.be.false;
