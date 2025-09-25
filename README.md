@@ -1,5 +1,3 @@
-[![pullreminders](https://pullreminders.com/badge.svg)](https://pullreminders.com?ref=badge)
-
 # What is Sugar?
 Sugar is a server side event notification system to deliver event data payloads to subscribed clients.
 By default it will attempt to connect the client to the server using websockets and will fall back to long polling.
