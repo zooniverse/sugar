@@ -22,7 +22,7 @@
     "express-rate-limit": "^7.0.1",
     "jsonwebtoken": "^9.0.0",
     "morgan": "^1.9.1",
-    "newrelic": "^12.5.1",
+    "newrelic": "^13.6.6",
     "primus": "^8.0.7",
     "redis": "^4.6.4"
   },
